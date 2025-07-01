@@ -1,6 +1,7 @@
 package gr.aueb.cf.e_commerce_app.mapper;
 
 import gr.aueb.cf.e_commerce_app.dto.*;
+import gr.aueb.cf.e_commerce_app.model.Product;
 import gr.aueb.cf.e_commerce_app.model.Role;
 import gr.aueb.cf.e_commerce_app.model.User;
 import gr.aueb.cf.e_commerce_app.model.UserMoreInfo;
@@ -94,5 +95,29 @@ public class Mapper {
         dto.setProfilePhotoUrl(userMoreInfo.getProfilePhotoUrl());
 
         return dto;
+    }
+
+    public ProductReadOnlyDto mapToProductReadOnlyDto(Product product) {
+        ProductReadOnlyDto dto = new ProductReadOnlyDto();
+
+        dto.setName(product.getName());
+        dto.setDescription(product.getDescription());
+        dto.setUuid(product.getUuid());
+        dto.setQuantity(product.getQuantity());
+        dto.setPrice(product.getPrice());
+        dto.setIsActive(product.getIsActive());
+
+        return dto;
+    }
+
+    public Product mapToProductEntity(ProductInsertDto insertDto) {
+        Product product = new Product();
+
+        product.setName(insertDto.getName());
+        product.setDescription(insertDto.getDescription());
+        product.setPrice(insertDto.getPrice());
+        product.setQuantity(insertDto.getQuantity());
+
+        return product;
     }
 }
