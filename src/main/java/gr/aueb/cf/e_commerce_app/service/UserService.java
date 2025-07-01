@@ -59,15 +59,15 @@ public class UserService {
     public void updateUserMoreInfo(UUID userId, UserMoreInfoInsertDto insertDto)
             throws AppObjectAlreadyExists, AppObjectNotFound {
 
-        // Check if phone number is used by someone else
-        Optional<UserMoreInfo> existing = userMoreInfoRepository.findByPhoneNumber(insertDto.getPhoneNumber());
-        if (existing.isPresent() && !existing.get().getUser().getUuid().equals(userId)) {
-            throw new AppObjectAlreadyExists("UserMoreInfo", "Phone number already used by another user");
-        }
-
         // Load user
         User user = userRepository.findByUuid(userId.toString())
                 .orElseThrow(() -> new AppObjectNotFound("User", "User with UUID: " + userId + " not found"));
+
+        // Check if phone number is used by someone else
+        Optional<UserMoreInfo> existing = userMoreInfoRepository.findByPhoneNumber(insertDto.getPhoneNumber());
+        if (existing.isPresent() && !existing.get().getUser().getId().equals(user.getId())) {
+            throw new AppObjectAlreadyExists("UserMoreInfo", "Phone number already used by another user");
+        }
 
         // Create or update userMoreInfo
         UserMoreInfo info = user.getUserMoreInfo();
