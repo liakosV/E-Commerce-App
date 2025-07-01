@@ -1,5 +1,6 @@
 package gr.aueb.cf.e_commerce_app.model;
 
+import gr.aueb.cf.e_commerce_app.model.static_data.Category;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,4 +28,12 @@ public class Product extends AbstractEntity {
     private Boolean isActive;
 
     private Integer quantity;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
+
+    public void setIsActive() {
+        if (quantity == 0) setIsActive(false);
+    }
 }
