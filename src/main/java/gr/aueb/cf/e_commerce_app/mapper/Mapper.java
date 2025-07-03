@@ -10,12 +10,21 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+/**
+ * Utility component responsible for converting between DTOs and entities.
+ */
 @Component
 @RequiredArgsConstructor
 public class Mapper {
 
     private final PasswordEncoder passwordEncoder;
 
+    /**
+     * Converts a {@link User} entity to a {@link UserReadOnlyDto}.
+     *
+     * @param user the user entity
+     * @return the mapped UserReadOnlyDto
+     */
     public UserReadOnlyDto mapToUserReadOnlyDto(User user) {
         var dto = new UserReadOnlyDto();
 
@@ -27,18 +36,21 @@ public class Mapper {
         dto.setEmail(user.getEmail());
         dto.setIsActive(user.getIsActive());
 
-        //map to RoleReadOnlyDto
         dto.setRole(mapToRoleReadOnlyDto(user.getRole()));
 
-        //map to UserMoreInfoDto
         if (user.getUserMoreInfo() != null) {
             dto.setUserMoreInfo(mapToUserMoreInfoReadOnlyDto(user.getUserMoreInfo()));
         }
 
-
         return dto;
     }
 
+    /**
+     * Converts a {@link UserInsertDto} to a {@link User} entity, including password encoding.
+     *
+     * @param insertDto the insert DTO
+     * @return the mapped User entity
+     */
     public User mapToUserEntity(UserInsertDto insertDto) {
         User user = new User();
 
@@ -50,26 +62,42 @@ public class Mapper {
         user.setIsActive(insertDto.getIsActive());
         user.setRole(insertDto.getRole());
 
-        //map to UserMoreInfo
         UserMoreInfoInsertDto userMoreInfoInsertDto = insertDto.getUserMoreInfo();
         if (userMoreInfoInsertDto != null) {
-            user.setUserMoreInfo(mapToUserMoreInfoEntity(insertDto.getUserMoreInfo()));
+            user.setUserMoreInfo(mapToUserMoreInfoEntity(userMoreInfoInsertDto));
         }
-
 
         return user;
     }
 
+    /**
+     * Converts a {@link Role} entity to a {@link RoleReadOnlyDto}.
+     *
+     * @param role the role entity
+     * @return the mapped RoleReadOnlyDto
+     */
     public RoleReadOnlyDto mapToRoleReadOnlyDto(Role role) {
         return new RoleReadOnlyDto(role.getId(), role.getName());
     }
 
+    /**
+     * Converts a {@link RoleInsertDto} to a {@link Role} entity.
+     *
+     * @param roleInsertDto the role insert DTO
+     * @return the mapped Role entity
+     */
     public Role mapToRoleEntity(RoleInsertDto roleInsertDto) {
         Role role = new Role();
         role.setName(roleInsertDto.getName().toUpperCase());
         return role;
     }
 
+    /**
+     * Converts a {@link UserMoreInfoInsertDto} to a {@link UserMoreInfo} entity.
+     *
+     * @param dto the insert DTO
+     * @return the mapped UserMoreInfo entity
+     */
     public UserMoreInfo mapToUserMoreInfoEntity(UserMoreInfoInsertDto dto) {
         if (dto == null) return null;
 
@@ -84,6 +112,12 @@ public class Mapper {
         return userMoreInfo;
     }
 
+    /**
+     * Converts a {@link UserMoreInfo} entity to a {@link UserMoreInfoReadOnlyDto}.
+     *
+     * @param userMoreInfo the entity
+     * @return the mapped read-only DTO
+     */
     public UserMoreInfoReadOnlyDto mapToUserMoreInfoReadOnlyDto(UserMoreInfo userMoreInfo) {
         if (userMoreInfo == null) return null;
 
@@ -98,9 +132,14 @@ public class Mapper {
         return dto;
     }
 
+    /**
+     * Converts a {@link Product} entity to a {@link ProductReadOnlyDto}.
+     *
+     * @param product the product entity
+     * @return the mapped ProductReadOnlyDto
+     */
     public ProductReadOnlyDto mapToProductReadOnlyDto(Product product) {
         ProductReadOnlyDto dto = new ProductReadOnlyDto();
-
 
         dto.setName(product.getName());
         dto.setDescription(product.getDescription());
@@ -108,17 +147,18 @@ public class Mapper {
         dto.setQuantity(product.getQuantity());
         dto.setPrice(product.getPrice());
         dto.setIsActive(product.getIsActive());
-
-//        dto.setCategory(mapToCategoryReadOnlyDto(product.getCategory()));
-
-        var categoryDto = new CategoryReadOnlyDto();
-        categoryDto.setId(product.getCategory().getId());
-        categoryDto.setName(product.getCategory().getName());
-        dto.setCategory(categoryDto);
+        dto.setCategory(mapToCategoryReadOnlyDto(product.getCategory()));
 
         return dto;
     }
 
+    /**
+     * Converts a {@link ProductInsertDto} to a {@link Product} entity.
+     * Also sets `isActive` based on the initial quantity.
+     *
+     * @param insertDto the insert DTO
+     * @return the mapped Product entity
+     */
     public Product mapToProductEntity(ProductInsertDto insertDto) {
         Product product = new Product();
 
@@ -126,26 +166,31 @@ public class Mapper {
         product.setDescription(insertDto.getDescription());
         product.setPrice(insertDto.getPrice());
         product.setQuantity(insertDto.getQuantity());
-        product.setIsActive(insertDto.getQuantity() > 0);
-
-
+        product.setIsActive(insertDto.getQuantity() > 0);  // Set active based on quantity
         product.setCategory(mapToCategoryEntity(insertDto.getCategory()));
 
         return product;
     }
 
+    /**
+     * Converts a {@link CategoryInsertDto} to a {@link Category} entity.
+     *
+     * @param insertDto the insert DTO
+     * @return the mapped Category entity
+     */
     public Category mapToCategoryEntity(CategoryInsertDto insertDto) {
         Category category = new Category();
-
         category.setName(insertDto.getName());
         return category;
     }
 
+    /**
+     * Converts a {@link Category} entity to a {@link CategoryReadOnlyDto}.
+     *
+     * @param category the category entity
+     * @return the mapped CategoryReadOnlyDto
+     */
     public CategoryReadOnlyDto mapToCategoryReadOnlyDto(Category category) {
-        CategoryReadOnlyDto dto = new CategoryReadOnlyDto();
-
-        dto.setId(category.getId());
-        dto.setName(dto.getName());
-        return dto;
+        return new CategoryReadOnlyDto(category.getId(), category.getName());
     }
 }
