@@ -33,7 +33,4 @@ public class Product extends AbstractEntity {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    public void setIsActive() {
-        if (quantity == 0) setIsActive(false);
-    }
 }
