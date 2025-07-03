@@ -1,10 +1,13 @@
 package gr.aueb.cf.e_commerce_app.service;
 
 import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectAlreadyExists;
+import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectNotFound;
 import gr.aueb.cf.e_commerce_app.dto.ProductInsertDto;
 import gr.aueb.cf.e_commerce_app.dto.ProductReadOnlyDto;
 import gr.aueb.cf.e_commerce_app.mapper.Mapper;
 import gr.aueb.cf.e_commerce_app.model.Product;
+import gr.aueb.cf.e_commerce_app.model.static_data.Category;
+import gr.aueb.cf.e_commerce_app.repository.CategoryRepository;
 import gr.aueb.cf.e_commerce_app.repository.ProductRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -19,17 +22,21 @@ import org.springframework.stereotype.Service;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
     private final Mapper mapper;
 
     @Transactional(rollbackOn = Exception.class)
-    public ProductReadOnlyDto saveProduct(ProductInsertDto insertDto) throws AppObjectAlreadyExists {
+    public ProductReadOnlyDto saveProduct(ProductInsertDto insertDto) throws AppObjectAlreadyExists, AppObjectNotFound {
 
         if (productRepository.findByName(insertDto.getName()).isPresent()) {
             throw new AppObjectAlreadyExists("Product", "Product with name: " + insertDto.getName() + " already exists");
         }
 
+        Category category = categoryRepository.findByName(insertDto.getCategory().getName())
+                .orElseThrow(() -> new AppObjectNotFound("Product", "The category was not found."));
+
         Product newProduct = productRepository.save(mapper.mapToProductEntity(insertDto));
-        newProduct.setIsActive(true);
+        newProduct.setCategory(category);
 
         return mapper.mapToProductReadOnlyDto(newProduct);
     }
@@ -39,5 +46,12 @@ public class ProductService {
         Pageable pageable = PageRequest.of(page, size, sort);
 
         return  productRepository.findAll(pageable).map(mapper::mapToProductReadOnlyDto);
+    }
+
+    public void removeProduct(String productUuid) throws AppObjectNotFound {
+        Product product = productRepository.findByUuid(productUuid)
+                .orElseThrow(() -> new AppObjectNotFound("Product", "The product was not found"));
+
+        productRepository.delete(product);
     }
 }
