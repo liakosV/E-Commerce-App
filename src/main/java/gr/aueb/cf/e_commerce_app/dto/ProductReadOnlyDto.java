@@ -17,4 +17,5 @@ public class ProductReadOnlyDto {
     private Boolean isActive;
     private Integer quantity;
     private Double price;
+    private CategoryReadOnlyDto category;
 }

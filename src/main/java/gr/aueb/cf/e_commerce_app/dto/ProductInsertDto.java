@@ -22,4 +22,7 @@ public class ProductInsertDto {
 
     @NotNull(message = "The quantity must not be null")
     private Integer quantity;
+
+    @NotNull(message = "Category must not be null")
+    private CategoryInsertDto category;
 }
