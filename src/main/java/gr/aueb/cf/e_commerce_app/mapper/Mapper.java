@@ -5,6 +5,7 @@ import gr.aueb.cf.e_commerce_app.model.Product;
 import gr.aueb.cf.e_commerce_app.model.Role;
 import gr.aueb.cf.e_commerce_app.model.User;
 import gr.aueb.cf.e_commerce_app.model.UserMoreInfo;
+import gr.aueb.cf.e_commerce_app.model.static_data.Category;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -100,12 +101,20 @@ public class Mapper {
     public ProductReadOnlyDto mapToProductReadOnlyDto(Product product) {
         ProductReadOnlyDto dto = new ProductReadOnlyDto();
 
+
         dto.setName(product.getName());
         dto.setDescription(product.getDescription());
         dto.setUuid(product.getUuid());
         dto.setQuantity(product.getQuantity());
         dto.setPrice(product.getPrice());
         dto.setIsActive(product.getIsActive());
+
+//        dto.setCategory(mapToCategoryReadOnlyDto(product.getCategory()));
+
+        var categoryDto = new CategoryReadOnlyDto();
+        categoryDto.setId(product.getCategory().getId());
+        categoryDto.setName(product.getCategory().getName());
+        dto.setCategory(categoryDto);
 
         return dto;
     }
@@ -117,7 +126,26 @@ public class Mapper {
         product.setDescription(insertDto.getDescription());
         product.setPrice(insertDto.getPrice());
         product.setQuantity(insertDto.getQuantity());
+        product.setIsActive(insertDto.getQuantity() > 0);
+
+
+        product.setCategory(mapToCategoryEntity(insertDto.getCategory()));
 
         return product;
+    }
+
+    public Category mapToCategoryEntity(CategoryInsertDto insertDto) {
+        Category category = new Category();
+
+        category.setName(insertDto.getName());
+        return category;
+    }
+
+    public CategoryReadOnlyDto mapToCategoryReadOnlyDto(Category category) {
+        CategoryReadOnlyDto dto = new CategoryReadOnlyDto();
+
+        dto.setId(category.getId());
+        dto.setName(dto.getName());
+        return dto;
     }
 }
