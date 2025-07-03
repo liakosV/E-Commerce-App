@@ -1,6 +1,7 @@
 package gr.aueb.cf.e_commerce_app.rest;
 
 import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectAlreadyExists;
+import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectNotFound;
 import gr.aueb.cf.e_commerce_app.dto.ProductInsertDto;
 import gr.aueb.cf.e_commerce_app.dto.ProductReadOnlyDto;
 import gr.aueb.cf.e_commerce_app.mapper.Mapper;
@@ -24,13 +25,14 @@ public class ProductRestController {
     private final ProductService productService;
 
     @PostMapping("/save")
-    public ResponseEntity<ProductReadOnlyDto> saveProduct(@RequestBody ProductInsertDto insertDto) throws AppObjectAlreadyExists {
+    public ResponseEntity<ProductReadOnlyDto> saveProduct(@RequestBody ProductInsertDto insertDto) throws AppObjectAlreadyExists, AppObjectNotFound {
 
         ProductReadOnlyDto productReadOnlyDto = productService.saveProduct(insertDto);
 
         return new ResponseEntity<>(productReadOnlyDto, HttpStatus.OK);
     }
 
+    @GetMapping
     public ResponseEntity<Page<ProductReadOnlyDto>> getPaginatedSortedProducts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -41,6 +43,11 @@ public class ProductRestController {
         Page<ProductReadOnlyDto> productPage = productService.getPaginatedSortedProducts(page, size, sortBy, sortDirection);
 
         return new ResponseEntity<>(productPage, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/remove/{uuid}")
+    public void removeProduct(@PathVariable String uuid) throws AppObjectNotFound {
+        productService.removeProduct(uuid);
     }
 
 }
