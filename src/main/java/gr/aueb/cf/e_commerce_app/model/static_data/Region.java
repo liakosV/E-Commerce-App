@@ -28,8 +28,4 @@ public class Region {
     @OneToMany(mappedBy = "region")
     private Set<UserMoreInfo> userMoreInfos = new HashSet<>();
 
-    public Set<UserMoreInfo> getAllUsers() {
-        if (userMoreInfos == null) userMoreInfos = new HashSet<>();
-        return Collections.unmodifiableSet(userMoreInfos);
-    }
 }
