@@ -51,7 +51,7 @@ public class Mapper {
      * @param insertDto the insert DTO
      * @return the mapped User entity
      */
-    public User mapToUserEntity(UserInsertDto insertDto) {
+    public User mapToUserEntity(UserInsertDto insertDto, Role role) {
         User user = new User();
 
         user.setUsername(insertDto.getUsername());
@@ -60,7 +60,10 @@ public class Mapper {
         user.setEmail(insertDto.getEmail());
         user.setPassword(passwordEncoder.encode(insertDto.getPassword()));
         user.setIsActive(insertDto.getIsActive());
-        user.setRole(insertDto.getRole());
+
+
+
+        user.setRole(role);
 
         UserMoreInfoInsertDto userMoreInfoInsertDto = insertDto.getUserMoreInfo();
         if (userMoreInfoInsertDto != null) {
@@ -89,6 +92,7 @@ public class Mapper {
     public Role mapToRoleEntity(RoleInsertDto roleInsertDto) {
         Role role = new Role();
         role.setName(roleInsertDto.getName().toUpperCase());
+        role.setDescription(roleInsertDto.getDescription());
         return role;
     }
 
@@ -103,7 +107,7 @@ public class Mapper {
 
         UserMoreInfo userMoreInfo = new UserMoreInfo();
         userMoreInfo.setGender(dto.getGender());
-        userMoreInfo.setRegion(dto.getRegion());
+        userMoreInfo.getRegion().setName(dto.getRegion());
         userMoreInfo.setAddress(dto.getAddress());
         userMoreInfo.setAddressNumber(dto.getAddressNumber());
         userMoreInfo.setPhoneNumber(dto.getPhoneNumber());
