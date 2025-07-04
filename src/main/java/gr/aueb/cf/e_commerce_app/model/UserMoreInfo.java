@@ -3,6 +3,7 @@ package gr.aueb.cf.e_commerce_app.model;
 import gr.aueb.cf.e_commerce_app.core.enums.Gender;
 import gr.aueb.cf.e_commerce_app.model.static_data.Region;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 @Getter
@@ -10,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "users_more_information")
+@Table(name = "user_more_info")
 public class UserMoreInfo extends AbstractEntity {
 
     @Id
@@ -33,10 +34,15 @@ public class UserMoreInfo extends AbstractEntity {
     private Integer addressNumber;
 
     @Column(name = "phone_number", unique = true)
+    @Size(min = 10)
     private String phoneNumber;
 
-    @OneToOne
-    @JoinColumn(name = "user_id")
+//    @OneToOne
+//    @JoinColumn(name = "user_id")
+//    private User user;
+
+    @OneToOne(mappedBy = "userMoreInfo")
     private User user;
+
 
 }
