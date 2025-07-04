@@ -39,12 +39,16 @@ public class User extends AbstractEntity implements UserDetails {
     @Column(nullable = false)
     private String password;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
-    @OneToOne(mappedBy = "user")
-    private  UserMoreInfo userMoreInfo;
+//    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private  UserMoreInfo userMoreInfo;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_more_info_id", referencedColumnName = "id") // owns the FK
+    private UserMoreInfo userMoreInfo;
 
     @Column(name = "is_active")
     private Boolean isActive;
