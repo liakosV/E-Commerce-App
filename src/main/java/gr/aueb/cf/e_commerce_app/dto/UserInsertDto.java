@@ -2,6 +2,7 @@ package gr.aueb.cf.e_commerce_app.dto;
 
 import gr.aueb.cf.e_commerce_app.model.Role;
 import gr.aueb.cf.e_commerce_app.model.UserMoreInfo;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -31,10 +32,11 @@ public class UserInsertDto {
     private String email;
 
     @NotNull(message = "The role must not be null")
-    private Role role;
+    private String roleName;
 
     @NotNull(message = "Is active must not be null")
     private Boolean isActive;
 
+    @Valid
     private UserMoreInfoInsertDto userMoreInfo;
 }
