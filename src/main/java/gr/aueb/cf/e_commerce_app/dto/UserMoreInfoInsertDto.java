@@ -14,7 +14,7 @@ public class UserMoreInfoInsertDto {
 
     private Gender gender;
 
-    private Region region;
+    private String region;
 
     private String address;
 
