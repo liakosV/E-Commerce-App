@@ -1,7 +1,7 @@
 package gr.aueb.cf.e_commerce_app.service;
 
-import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectAlreadyExists;
-import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectNotFound;
+import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectAlreadyExistsException;
+import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectNotFoundException;
 import gr.aueb.cf.e_commerce_app.dto.CategoryInsertDto;
 import gr.aueb.cf.e_commerce_app.dto.CategoryReadOnlyDto;
 import gr.aueb.cf.e_commerce_app.mapper.Mapper;
@@ -19,10 +19,10 @@ public class CategoryService {
     private final Mapper mapper;
 
     @Transactional(rollbackOn = Exception.class)
-    public CategoryReadOnlyDto saveCategory(CategoryInsertDto insertDto) throws AppObjectAlreadyExists {
+    public CategoryReadOnlyDto saveCategory(CategoryInsertDto insertDto) throws AppObjectAlreadyExistsException {
 
         if (categoryRepository.findByName(insertDto.getName()).isPresent()) {
-            throw new AppObjectAlreadyExists("Category", "The category with name: " + insertDto.getName() + " already exists");
+            throw new AppObjectAlreadyExistsException("Category", "The category with name: " + insertDto.getName() + " already exists");
         }
 
         Category category = categoryRepository.save(mapper.mapToCategoryEntity(insertDto));
@@ -31,9 +31,9 @@ public class CategoryService {
     }
 
     @Transactional(rollbackOn = Exception.class)
-    public void removeCategory(Long id) throws AppObjectNotFound {
+    public void removeCategory(Long id) throws AppObjectNotFoundException {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new AppObjectNotFound("Category", "The category you want to remove is not found"));
+                .orElseThrow(() -> new AppObjectNotFoundException("Category", "The category you want to remove is not found"));
 
         categoryRepository.delete(category);
     }

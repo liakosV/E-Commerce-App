@@ -1,12 +1,9 @@
 package gr.aueb.cf.e_commerce_app.rest;
 
-import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectAlreadyExists;
-import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectNotFound;
+import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectAlreadyExistsException;
+import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectNotFoundException;
 import gr.aueb.cf.e_commerce_app.dto.ProductInsertDto;
 import gr.aueb.cf.e_commerce_app.dto.ProductReadOnlyDto;
-import gr.aueb.cf.e_commerce_app.mapper.Mapper;
-import gr.aueb.cf.e_commerce_app.model.Product;
-import gr.aueb.cf.e_commerce_app.repository.ProductRepository;
 import gr.aueb.cf.e_commerce_app.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -17,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/product")
+@RequestMapping("/api/products")
 @RequiredArgsConstructor
 public class ProductRestController {
 
@@ -25,7 +22,7 @@ public class ProductRestController {
     private final ProductService productService;
 
     @PostMapping("/save")
-    public ResponseEntity<ProductReadOnlyDto> saveProduct(@RequestBody ProductInsertDto insertDto) throws AppObjectAlreadyExists, AppObjectNotFound {
+    public ResponseEntity<ProductReadOnlyDto> saveProduct(@RequestBody ProductInsertDto insertDto) throws AppObjectAlreadyExistsException, AppObjectNotFoundException {
 
         ProductReadOnlyDto productReadOnlyDto = productService.saveProduct(insertDto);
 
@@ -46,7 +43,7 @@ public class ProductRestController {
     }
 
     @DeleteMapping("/remove/{uuid}")
-    public void removeProduct(@PathVariable String uuid) throws AppObjectNotFound {
+    public void removeProduct(@PathVariable String uuid) throws AppObjectNotFoundException {
         productService.removeProduct(uuid);
     }
 

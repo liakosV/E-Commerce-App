@@ -1,8 +1,8 @@
 package gr.aueb.cf.e_commerce_app.service;
 
-import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectAlreadyExists;
-import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectIllegalState;
-import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectNotFound;
+import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectAlreadyExistsException;
+import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectIllegalStateException;
+import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectNotFoundException;
 import gr.aueb.cf.e_commerce_app.dto.RoleInsertDto;
 import gr.aueb.cf.e_commerce_app.dto.RoleReadOnlyDto;
 import gr.aueb.cf.e_commerce_app.mapper.Mapper;
@@ -20,10 +20,10 @@ public class RoleService {
     private final RoleRepository roleRepository;
     private final Mapper mapper;
 
-    public RoleReadOnlyDto createRole(RoleInsertDto roleInsertDto) throws AppObjectAlreadyExists {
+    public RoleReadOnlyDto createRole(RoleInsertDto roleInsertDto) throws AppObjectAlreadyExistsException {
 
         if (roleRepository.findByName(roleInsertDto.getName()).isPresent()) {
-            throw new AppObjectAlreadyExists("Role", "Role with the name: " + roleInsertDto.getName() + " already exists");
+            throw new AppObjectAlreadyExistsException("Role", "Role with the name: " + roleInsertDto.getName() + " already exists");
         }
 
         Role savedRole = roleRepository.save(mapper.mapToRoleEntity(roleInsertDto));
@@ -36,12 +36,12 @@ public class RoleService {
                 .toList();
     }
 
-    public void removeRole(Long id) throws AppObjectNotFound, AppObjectIllegalState {
+    public void removeRole(Long id) throws AppObjectNotFoundException, AppObjectIllegalStateException {
         Role role = roleRepository.findById(id)
-                .orElseThrow(() -> new AppObjectNotFound("Role", "Role with id: " + id + " not found"));
+                .orElseThrow(() -> new AppObjectNotFoundException("Role", "Role with id: " + id + " not found"));
 
         if (!role.getUsers().isEmpty()) {
-            throw new AppObjectIllegalState("Role","Cannot delete a role that is assigned to users");
+            throw new AppObjectIllegalStateException("Role","Cannot delete a role that is assigned to users");
         }
 
         roleRepository.delete(role);

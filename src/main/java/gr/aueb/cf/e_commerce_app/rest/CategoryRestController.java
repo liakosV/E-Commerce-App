@@ -1,12 +1,11 @@
 package gr.aueb.cf.e_commerce_app.rest;
 
-import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectAlreadyExists;
-import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectNotFound;
+import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectAlreadyExistsException;
+import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectNotFoundException;
 import gr.aueb.cf.e_commerce_app.dto.CategoryInsertDto;
 import gr.aueb.cf.e_commerce_app.dto.CategoryReadOnlyDto;
 import gr.aueb.cf.e_commerce_app.service.CategoryService;
 import jakarta.validation.Valid;
-import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +22,7 @@ public class CategoryRestController {
     private final CategoryService categoryService;
 
     @PostMapping("/save")
-    public ResponseEntity<CategoryReadOnlyDto> saveCategory(@Valid @RequestBody CategoryInsertDto insertDto) throws AppObjectAlreadyExists {
+    public ResponseEntity<CategoryReadOnlyDto> saveCategory(@Valid @RequestBody CategoryInsertDto insertDto) throws AppObjectAlreadyExistsException {
 
         CategoryReadOnlyDto categoryReadOnlyDto = categoryService.saveCategory(insertDto);
         LOGGER.info("New category added.");
@@ -31,7 +30,7 @@ public class CategoryRestController {
     }
 
     @DeleteMapping("remove/{id}")
-    public void removeCategory(@PathVariable Long id) throws AppObjectNotFound {
+    public void removeCategory(@PathVariable Long id) throws AppObjectNotFoundException {
         categoryService.removeCategory(id);
         LOGGER.info("Category with id: {} removed.", id);
     }

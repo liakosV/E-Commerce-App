@@ -1,6 +1,6 @@
 package gr.aueb.cf.e_commerce_app.authentication;
 
-import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectNotAuthorized;
+import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectNotAuthorizedException;
 import gr.aueb.cf.e_commerce_app.dto.AuthenticationRequestDto;
 import gr.aueb.cf.e_commerce_app.dto.AuthenticationResponseDto;
 import gr.aueb.cf.e_commerce_app.model.User;
@@ -20,14 +20,14 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final UserRepository userRepository;
 
-    public AuthenticationResponseDto authenticate(AuthenticationRequestDto dto) throws AppObjectNotAuthorized {
+    public AuthenticationResponseDto authenticate(AuthenticationRequestDto dto) throws AppObjectNotAuthorizedException {
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword())
         );
 
         User user = userRepository.findByUsername(authentication.getName())
-                .orElseThrow(() -> new AppObjectNotAuthorized("User", "User not authorized"));
+                .orElseThrow(() -> new AppObjectNotAuthorizedException("User", "User not authorized"));
 
         String token = jwtService.generateToken(authentication.getName(), user.getRole().getName());
         return new AuthenticationResponseDto(user.getFirstname(), user.getLastname(), token);

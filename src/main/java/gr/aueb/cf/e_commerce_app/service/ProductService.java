@@ -1,7 +1,7 @@
 package gr.aueb.cf.e_commerce_app.service;
 
-import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectAlreadyExists;
-import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectNotFound;
+import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectAlreadyExistsException;
+import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectNotFoundException;
 import gr.aueb.cf.e_commerce_app.dto.ProductInsertDto;
 import gr.aueb.cf.e_commerce_app.dto.ProductReadOnlyDto;
 import gr.aueb.cf.e_commerce_app.mapper.Mapper;
@@ -26,14 +26,14 @@ public class ProductService {
     private final Mapper mapper;
 
     @Transactional(rollbackOn = Exception.class)
-    public ProductReadOnlyDto saveProduct(ProductInsertDto insertDto) throws AppObjectAlreadyExists, AppObjectNotFound {
+    public ProductReadOnlyDto saveProduct(ProductInsertDto insertDto) throws AppObjectAlreadyExistsException, AppObjectNotFoundException {
 
         if (productRepository.findByName(insertDto.getName()).isPresent()) {
-            throw new AppObjectAlreadyExists("Product", "Product with name: " + insertDto.getName() + " already exists");
+            throw new AppObjectAlreadyExistsException("Product", "Product with name: " + insertDto.getName() + " already exists");
         }
 
         Category category = categoryRepository.findByName(insertDto.getCategory().getName())
-                .orElseThrow(() -> new AppObjectNotFound("Product", "The category was not found."));
+                .orElseThrow(() -> new AppObjectNotFoundException("Product", "The category was not found."));
 
         Product newProduct = productRepository.save(mapper.mapToProductEntity(insertDto));
         newProduct.setCategory(category);
@@ -48,9 +48,9 @@ public class ProductService {
         return  productRepository.findAll(pageable).map(mapper::mapToProductReadOnlyDto);
     }
 
-    public void removeProduct(String productUuid) throws AppObjectNotFound {
+    public void removeProduct(String productUuid) throws AppObjectNotFoundException {
         Product product = productRepository.findByUuid(productUuid)
-                .orElseThrow(() -> new AppObjectNotFound("Product", "The product was not found"));
+                .orElseThrow(() -> new AppObjectNotFoundException("Product", "The product was not found"));
 
         productRepository.delete(product);
     }
