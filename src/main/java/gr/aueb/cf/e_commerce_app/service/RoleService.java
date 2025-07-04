@@ -6,7 +6,7 @@ import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectNotFoundException;
 import gr.aueb.cf.e_commerce_app.dto.RoleInsertDto;
 import gr.aueb.cf.e_commerce_app.dto.RoleReadOnlyDto;
 import gr.aueb.cf.e_commerce_app.mapper.Mapper;
-import gr.aueb.cf.e_commerce_app.model.Role;
+import gr.aueb.cf.e_commerce_app.model.static_data.Role;
 import gr.aueb.cf.e_commerce_app.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -6,7 +6,7 @@ import gr.aueb.cf.e_commerce_app.dto.UserInsertDto;
 import gr.aueb.cf.e_commerce_app.dto.UserMoreInfoInsertDto;
 import gr.aueb.cf.e_commerce_app.dto.UserReadOnlyDto;
 import gr.aueb.cf.e_commerce_app.mapper.Mapper;
-import gr.aueb.cf.e_commerce_app.model.Role;
+import gr.aueb.cf.e_commerce_app.model.static_data.Role;
 import gr.aueb.cf.e_commerce_app.model.User;
 import gr.aueb.cf.e_commerce_app.model.UserMoreInfo;
 import gr.aueb.cf.e_commerce_app.model.static_data.Region;

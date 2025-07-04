@@ -1,6 +1,7 @@
 package gr.aueb.cf.e_commerce_app.model;
 
 
+import gr.aueb.cf.e_commerce_app.model.static_data.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.*;

@@ -1,5 +1,6 @@
-package gr.aueb.cf.e_commerce_app.model;
+package gr.aueb.cf.e_commerce_app.model.static_data;
 
+import gr.aueb.cf.e_commerce_app.model.User;
 import jakarta.persistence.*;
 import lombok.*;
 

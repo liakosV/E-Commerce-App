@@ -1,7 +1,5 @@
 package gr.aueb.cf.e_commerce_app.dto;
 
-import gr.aueb.cf.e_commerce_app.model.Role;
-import gr.aueb.cf.e_commerce_app.model.UserMoreInfo;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
