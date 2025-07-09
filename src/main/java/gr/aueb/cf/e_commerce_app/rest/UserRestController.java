@@ -1,5 +1,6 @@
 package gr.aueb.cf.e_commerce_app.rest;
 
+import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectAccessDeniedException;
 import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectAlreadyExistsException;
 import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectNotFoundException;
 import gr.aueb.cf.e_commerce_app.core.exceptions.ValidationException;
@@ -91,7 +92,7 @@ public class UserRestController {
 
     @PutMapping("/update/{userId}")
     public void updateUserMoreInfo(@PathVariable UUID userId, @RequestBody UserMoreInfoInsertDto insertDto)
-            throws AppObjectNotFoundException, AppObjectAlreadyExistsException {
+            throws AppObjectNotFoundException, AppObjectAlreadyExistsException, AppObjectAccessDeniedException {
         userService.updateUserMoreInfo(userId, insertDto);
     }
 }
