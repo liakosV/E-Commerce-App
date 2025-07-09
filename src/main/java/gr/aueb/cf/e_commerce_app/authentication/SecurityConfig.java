@@ -28,24 +28,16 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/auth/authenticate", "/api/users/save").permitAll()
+                        .requestMatchers("/api/auth/authenticate", "/api/users/save", "/api/users/update/**").permitAll()
                         .requestMatchers("/api/users/**").hasAuthority("ADMIN")
-                        .requestMatchers("/login", "/styles/**", "/js/**", "/img/**").permitAll()
+                        .requestMatchers("/api/roles/**").hasAuthority("ADMIN")
+                        .requestMatchers("/api/category/**").hasAuthority("ADMIN")
+                        .requestMatchers("/api/products/save", "/api/products/remove/**").hasAnyAuthority("ADMIN", "SELLER")
+                        .requestMatchers("/api/orders/**").hasAnyAuthority("ADMIN", "SELLER", "CUSTOMER")
+                        .requestMatchers("/styles/**", "/js/**", "/img/**").permitAll()
                         .anyRequest().permitAll()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-//                .formLogin(formLogin -> formLogin
-//                        .loginPage("/login")
-//                        .defaultSuccessUrl("/dashboard"))
-//                .httpBasic(Customizer.withDefaults())
-//                .logout(logout -> logout
-//                        .logoutSuccessUrl("/login")
-//                        .invalidateHttpSession(true)
-//                        .deleteCookies("JSESSIONID"))
-//                .rememberMe(rememberMe -> rememberMe
-//                        .alwaysRemember(true)
-//                        .rememberMeCookieName("remember-me")
-//                        .tokenValiditySeconds(24 * 60 * 60));
 
         return http.build();
     }
