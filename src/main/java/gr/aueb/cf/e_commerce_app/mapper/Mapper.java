@@ -13,6 +13,7 @@ import java.util.List;
 
 /**
  * Utility component responsible for converting between DTOs and entities.
+ * Handles mapping logic for users, roles, products, categories, orders, and related entities.
  */
 @Component
 @RequiredArgsConstructor
@@ -47,9 +48,10 @@ public class Mapper {
     }
 
     /**
-     * Converts a {@link UserInsertDto} to a {@link User} entity, including password encoding.
+     * Converts a {@link UserInsertDto} to a {@link User} entity, including password encoding and nested info.
      *
      * @param insertDto the insert DTO
+     * @param role the role to assign to the user
      * @return the mapped User entity
      */
     public User mapToUserEntity(UserInsertDto insertDto, Role role) {
@@ -61,9 +63,6 @@ public class Mapper {
         user.setEmail(insertDto.getEmail());
         user.setPassword(passwordEncoder.encode(insertDto.getPassword()));
         user.setIsActive(insertDto.getIsActive());
-
-
-
         user.setRole(role);
 
         UserMoreInfoInsertDto userMoreInfoInsertDto = insertDto.getUserMoreInfo();
@@ -159,7 +158,7 @@ public class Mapper {
 
     /**
      * Converts a {@link ProductInsertDto} to a {@link Product} entity.
-     * Also sets `isActive` based on the initial quantity.
+     * Also sets {@code isActive} based on the initial quantity.
      *
      * @param insertDto the insert DTO
      * @return the mapped Product entity
@@ -199,6 +198,13 @@ public class Mapper {
         return new CategoryReadOnlyDto(category.getId(), category.getName());
     }
 
+    /**
+     * Converts an {@link Order} entity to an {@link OrderReadOnlyDto}.
+     * Includes item mapping and total calculation.
+     *
+     * @param order the order entity
+     * @return the mapped OrderReadOnlyDto
+     */
     public OrderReadOnlyDto mapToOrderReadOnlyDto(Order order) {
         OrderReadOnlyDto dto = new OrderReadOnlyDto();
 
@@ -214,9 +220,16 @@ public class Mapper {
         dto.setUserId(order.getUser().getId());
         dto.setItems(orderItemsDtos);
         dto.setTotalAmount(totalAmount);
+
         return dto;
     }
 
+    /**
+     * Converts an {@link OrderItem} entity to an {@link OrderItemReadOnlyDto}.
+     *
+     * @param orderItem the order item entity
+     * @return the mapped OrderItemReadOnlyDto
+     */
     public OrderItemReadOnlyDto mapToOrderItemReadOnlyDto(OrderItem orderItem) {
         OrderItemReadOnlyDto dto = new OrderItemReadOnlyDto();
         dto.setProductId(orderItem.getProduct().getId());
@@ -227,3 +240,4 @@ public class Mapper {
         return dto;
     }
 }
+
