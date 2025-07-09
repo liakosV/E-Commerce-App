@@ -79,15 +79,20 @@ public class UserRestController {
                                     mediaType = "application/json",
                                     schema = @Schema(implementation = UserReadOnlyDto.class)
                             )
-                    )
+                    ),
+                    @ApiResponse(responseCode = "400", description = "Validation failed", content = @Content),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+                    @ApiResponse(responseCode = "409", description = "User already exists", content = @Content)
             }
     )
     @PostMapping("/save")
     public ResponseEntity<UserReadOnlyDto> saveUser(@Valid @RequestBody UserInsertDto userInsertDto, BindingResult bindingResult)
             throws ValidationException, AppObjectAlreadyExistsException, AppObjectNotFoundException {
-//        if (bindingResult.hasErrors()) throw new ValidationException(bindingResult);
+
+        if (bindingResult.hasErrors()) throw new ValidationException(bindingResult);
 
         UserReadOnlyDto userReadOnlyDto = userService.saveUser(userInsertDto);
+        LOGGER.info("User inserted successfully.");
         return new ResponseEntity<>(userReadOnlyDto, HttpStatus.OK);
     }
 
@@ -101,12 +106,22 @@ public class UserRestController {
                                     mediaType = "application/json",
                                     schema = @Schema(implementation = UserMoreInfoReadOnlyDto.class)
                             )
-                    )
+                    ),
+                    @ApiResponse(responseCode = "400", description = "Validation failed", content = @Content),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+                    @ApiResponse(responseCode = "409", description = "Phone number already exists", content = @Content)
             }
     )
     @PutMapping("/update/{userId}")
-    public void updateUserMoreInfo(@PathVariable UUID userId, @RequestBody UserMoreInfoInsertDto insertDto)
-            throws AppObjectNotFoundException, AppObjectAlreadyExistsException, AppObjectAccessDeniedException {
+    public void updateUserMoreInfo(
+            @PathVariable UUID userId,
+            @Valid @RequestBody UserMoreInfoInsertDto insertDto,
+            BindingResult bindingResult)
+            throws AppObjectNotFoundException, AppObjectAlreadyExistsException, AppObjectAccessDeniedException, ValidationException {
+
+        if (bindingResult.hasErrors()) throw new ValidationException(bindingResult);
+
         userService.updateUserMoreInfo(userId, insertDto);
+        LOGGER.info("User infos updated successfully.");
     }
 }
