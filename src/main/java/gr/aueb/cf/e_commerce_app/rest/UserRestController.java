@@ -6,6 +6,7 @@ import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectNotFoundException;
 import gr.aueb.cf.e_commerce_app.core.exceptions.ValidationException;
 import gr.aueb.cf.e_commerce_app.dto.UserInsertDto;
 import gr.aueb.cf.e_commerce_app.dto.UserMoreInfoInsertDto;
+import gr.aueb.cf.e_commerce_app.dto.UserMoreInfoReadOnlyDto;
 import gr.aueb.cf.e_commerce_app.dto.UserReadOnlyDto;
 import gr.aueb.cf.e_commerce_app.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -90,6 +91,19 @@ public class UserRestController {
         return new ResponseEntity<>(userReadOnlyDto, HttpStatus.OK);
     }
 
+    @Operation(
+            summary = "Update the userMoreInfo",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "UserMoreInfo updated",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = UserMoreInfoReadOnlyDto.class)
+                            )
+                    )
+            }
+    )
     @PutMapping("/update/{userId}")
     public void updateUserMoreInfo(@PathVariable UUID userId, @RequestBody UserMoreInfoInsertDto insertDto)
             throws AppObjectNotFoundException, AppObjectAlreadyExistsException, AppObjectAccessDeniedException {
