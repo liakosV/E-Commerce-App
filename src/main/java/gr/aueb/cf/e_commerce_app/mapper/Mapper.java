@@ -1,14 +1,15 @@
 package gr.aueb.cf.e_commerce_app.mapper;
 
 import gr.aueb.cf.e_commerce_app.dto.*;
-import gr.aueb.cf.e_commerce_app.model.Product;
+import gr.aueb.cf.e_commerce_app.model.*;
 import gr.aueb.cf.e_commerce_app.model.static_data.Role;
-import gr.aueb.cf.e_commerce_app.model.User;
-import gr.aueb.cf.e_commerce_app.model.UserMoreInfo;
 import gr.aueb.cf.e_commerce_app.model.static_data.Category;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * Utility component responsible for converting between DTOs and entities.
@@ -196,5 +197,33 @@ public class Mapper {
      */
     public CategoryReadOnlyDto mapToCategoryReadOnlyDto(Category category) {
         return new CategoryReadOnlyDto(category.getId(), category.getName());
+    }
+
+    public OrderReadOnlyDto mapToOrderReadOnlyDto(Order order) {
+        OrderReadOnlyDto dto = new OrderReadOnlyDto();
+
+        List<OrderItemReadOnlyDto> orderItemsDtos = order.getOrderItems().stream()
+                .map(this::mapToOrderItemReadOnlyDto)
+                .toList();
+
+        BigDecimal totalAmount = orderItemsDtos.stream()
+                .map(OrderItemReadOnlyDto::getTotalPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        dto.setOrderId(order.getId());
+        dto.setUserId(order.getUser().getId());
+        dto.setItems(orderItemsDtos);
+        dto.setTotalAmount(totalAmount);
+        return dto;
+    }
+
+    public OrderItemReadOnlyDto mapToOrderItemReadOnlyDto(OrderItem orderItem) {
+        OrderItemReadOnlyDto dto = new OrderItemReadOnlyDto();
+        dto.setProductId(orderItem.getProduct().getId());
+        dto.setProductName(orderItem.getProduct().getName());
+        dto.setUnitPrice(orderItem.getUnitPrice());
+        dto.setQuantity(orderItem.getQuantity());
+        dto.setTotalPrice(orderItem.getTotalPrice());
+        return dto;
     }
 }
