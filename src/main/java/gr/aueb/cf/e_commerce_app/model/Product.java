@@ -4,6 +4,8 @@ import gr.aueb.cf.e_commerce_app.model.static_data.Category;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Entity
 @Getter
 @Setter
@@ -20,7 +22,7 @@ public class Product extends AbstractEntity {
     private String name;
 
     @Column(nullable = false)
-    private Double price;
+    private BigDecimal price;
 
     private String description;
 

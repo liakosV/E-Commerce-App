@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,7 +17,7 @@ public class ProductInsertDto {
     private String name;
 
     @NotNull(message = "The price must not be null")
-    private Double price;
+    private BigDecimal price;
 
     @NotEmpty(message = "The description must not be empty")
     private String description;
