@@ -1,5 +1,6 @@
 package gr.aueb.cf.e_commerce_app.service;
 
+import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectAccessDeniedException;
 import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectAlreadyExistsException;
 import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectNotFoundException;
 import gr.aueb.cf.e_commerce_app.dto.UserInsertDto;
@@ -20,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -59,11 +61,21 @@ public class UserService {
 
     @Transactional(rollbackOn = Exception.class)
     public void updateUserMoreInfo(UUID userId, UserMoreInfoInsertDto insertDto)
-            throws AppObjectAlreadyExistsException, AppObjectNotFoundException {
+            throws AppObjectAlreadyExistsException, AppObjectNotFoundException, AppObjectAccessDeniedException {
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User currentUser = userRepository.findByUsername(username).orElseThrow(() -> new AppObjectNotFoundException("User", "The user for authentication does not found"));
 
         // Load user
         User user = userRepository.findByUuid(userId.toString())
                 .orElseThrow(() -> new AppObjectNotFoundException("User", "User with UUID: " + userId + " not found"));
+
+        boolean isAdmin = currentUser.getRole().getName().equals("ADMIN");
+        boolean isOwner = currentUser.getId().equals(user.getId());
+
+        if (!isAdmin && !isOwner) {
+            throw new AppObjectAccessDeniedException("UserMoreInfo", "You are not authenticated to update this user's information");
+        }
 
         // Check if phone number is used by someone else
         Optional<UserMoreInfo> existing = userMoreInfoRepository.findByPhoneNumber(insertDto.getPhoneNumber());
@@ -75,21 +87,24 @@ public class UserService {
             }
         }
 
-        Region region = regionRepository.findByName(insertDto.getRegion())
-                .orElseThrow(() -> new AppObjectNotFoundException("Region", "The region: " + insertDto.getRegion() + " was not found"));
-
-        // Create or update userMoreInfo
         UserMoreInfo info = user.getUserMoreInfo();
         if (info == null) {
             info = new UserMoreInfo();
         }
 
-        info.setPhoneNumber(insertDto.getPhoneNumber());
-        info.setGender(insertDto.getGender());
-        info.setRegion(region);
-        info.setAddress(insertDto.getAddress());
-        info.setAddressNumber(insertDto.getAddressNumber());
-        info.setProfilePhotoUrl(insertDto.getProfilePhotoUrl());
+        if (insertDto.getRegion() != null) {
+            Region region = regionRepository.findByName(insertDto.getRegion())
+                    .orElseThrow(() -> new AppObjectNotFoundException("Region", "The region: " + insertDto.getRegion() + " was not found"));
+            info.setRegion(region);
+        } else {
+            info.setRegion(null);
+        }
+
+        if (insertDto.getPhoneNumber() != null) info.setPhoneNumber(insertDto.getPhoneNumber());
+        if (insertDto.getGender() != null) info.setGender(insertDto.getGender());
+        if (insertDto.getAddress() != null) info.setAddress(insertDto.getAddress());
+        if (insertDto.getAddressNumber() != null) info.setAddressNumber(insertDto.getAddressNumber());
+        if (insertDto.getProfilePhotoUrl() != null) info.setProfilePhotoUrl(insertDto.getProfilePhotoUrl());
 
         info.setUser(user);
         user.setUserMoreInfo(info);
