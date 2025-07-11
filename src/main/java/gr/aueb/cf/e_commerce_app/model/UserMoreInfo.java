@@ -1,5 +1,6 @@
 package gr.aueb.cf.e_commerce_app.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import gr.aueb.cf.e_commerce_app.core.enums.Gender;
 import gr.aueb.cf.e_commerce_app.model.static_data.Region;
 import jakarta.persistence.*;
@@ -31,7 +32,7 @@ public class UserMoreInfo extends AbstractEntity {
     private String address;
 
     @Column(name = "address_number")
-    private Integer addressNumber;
+    private String addressNumber;
 
     @Column(name = "phone_number", unique = true)
     @Size(min = 10)
