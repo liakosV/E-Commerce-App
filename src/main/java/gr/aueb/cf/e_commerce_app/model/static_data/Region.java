@@ -24,8 +24,18 @@ public class Region {
     @Column(nullable = false, unique = true)
     private String name;
 
+    public Region(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     @Getter(AccessLevel.PRIVATE)
     @OneToMany(mappedBy = "region")
     private Set<UserMoreInfo> userMoreInfos = new HashSet<>();
+
+    public Set<UserMoreInfo> getAllUserMoreInfos() {
+        if (userMoreInfos == null) userMoreInfos = new HashSet<>();
+        return Collections.unmodifiableSet(userMoreInfos);
+    }
 
 }
