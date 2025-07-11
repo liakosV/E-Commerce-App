@@ -32,7 +32,7 @@ public class ProductService {
             throw new AppObjectAlreadyExistsException("Product", "Product with name: " + insertDto.getName() + " already exists");
         }
 
-        Category category = categoryRepository.findByName(insertDto.getCategory().getName())
+        Category category = categoryRepository.findById(insertDto.getCategoryId())
                 .orElseThrow(() -> new AppObjectNotFoundException("Product", "The category was not found."));
 
         Product newProduct = productRepository.save(mapper.mapToProductEntity(insertDto));
