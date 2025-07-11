@@ -2,6 +2,7 @@ package gr.aueb.cf.e_commerce_app.mapper;
 
 import gr.aueb.cf.e_commerce_app.dto.*;
 import gr.aueb.cf.e_commerce_app.model.*;
+import gr.aueb.cf.e_commerce_app.model.static_data.Region;
 import gr.aueb.cf.e_commerce_app.model.static_data.Role;
 import gr.aueb.cf.e_commerce_app.model.static_data.Category;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +39,7 @@ public class Mapper {
         dto.setEmail(user.getEmail());
         dto.setIsActive(user.getIsActive());
 
-        dto.setRole(mapToRoleReadOnlyDto(user.getRole()));
+        dto.setRole(mapToRoleReadOnlyDto(user.getRole()).getName());
 
         if (user.getUserMoreInfo() != null) {
             dto.setUserMoreInfo(mapToUserMoreInfoReadOnlyDto(user.getUserMoreInfo()));
@@ -62,7 +63,6 @@ public class Mapper {
         user.setLastname(insertDto.getLastname());
         user.setEmail(insertDto.getEmail());
         user.setPassword(passwordEncoder.encode(insertDto.getPassword()));
-        user.setIsActive(insertDto.getIsActive());
         user.setRole(role);
 
         UserMoreInfoInsertDto userMoreInfoInsertDto = insertDto.getUserMoreInfo();
@@ -80,7 +80,7 @@ public class Mapper {
      * @return the mapped RoleReadOnlyDto
      */
     public RoleReadOnlyDto mapToRoleReadOnlyDto(Role role) {
-        return new RoleReadOnlyDto(role.getId(), role.getName());
+        return new RoleReadOnlyDto(role.getId(), role.getName(), role.getDescription());
     }
 
     /**
@@ -107,7 +107,13 @@ public class Mapper {
 
         UserMoreInfo userMoreInfo = new UserMoreInfo();
         userMoreInfo.setGender(dto.getGender());
-        userMoreInfo.getRegion().setName(dto.getRegion());
+
+        if (dto.getRegionId() != null) {
+            Region region = new Region();
+            region.setId(dto.getRegionId());
+            userMoreInfo.setRegion(region);
+        }
+
         userMoreInfo.setAddress(dto.getAddress());
         userMoreInfo.setAddressNumber(dto.getAddressNumber());
         userMoreInfo.setPhoneNumber(dto.getPhoneNumber());
@@ -128,10 +134,12 @@ public class Mapper {
         UserMoreInfoReadOnlyDto dto = new UserMoreInfoReadOnlyDto();
         dto.setPhoneNumber(userMoreInfo.getPhoneNumber());
         dto.setGender(userMoreInfo.getGender());
-        dto.setRegion(userMoreInfo.getRegion());
         dto.setAddress(userMoreInfo.getAddress());
         dto.setAddressNumber(userMoreInfo.getAddressNumber());
         dto.setProfilePhotoUrl(userMoreInfo.getProfilePhotoUrl());
+
+        Region region = userMoreInfo.getRegion();
+        dto.setRegionName(region != null ? region.getName() : null);
 
         return dto;
     }
@@ -171,8 +179,6 @@ public class Mapper {
         product.setPrice(insertDto.getPrice());
         product.setQuantity(insertDto.getQuantity());
         product.setIsActive(insertDto.getQuantity() > 0);  // Set active based on quantity
-        product.setCategory(mapToCategoryEntity(insertDto.getCategory()));
-
         return product;
     }
 
@@ -220,6 +226,7 @@ public class Mapper {
         dto.setUserId(order.getUser().getId());
         dto.setItems(orderItemsDtos);
         dto.setTotalAmount(totalAmount);
+        dto.setIsActive(order.getIsActive());
 
         return dto;
     }
@@ -239,5 +246,15 @@ public class Mapper {
         dto.setTotalPrice(orderItem.getTotalPrice());
         return dto;
     }
-}
 
+    public Region mapToRegionEntity(RegionInsertDto dto) {
+        Region region = new Region();
+        region.setName(dto.getName());
+        return region;
+    }
+
+    public RegionReadOnlyDto mapToRegionReadOnlyDto(Region region) {
+
+        return new RegionReadOnlyDto(region.getId(), region.getName());
+    }
+}
