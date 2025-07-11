@@ -12,4 +12,6 @@ public class RoleReadOnlyDto {
     private Long id;
 
     private String name;
+
+    private String description;
 }
