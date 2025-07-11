@@ -2,6 +2,7 @@ package gr.aueb.cf.e_commerce_app.service;
 
 import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectAccessDeniedException;
 import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectAlreadyExistsException;
+import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectIllegalStateException;
 import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectNotFoundException;
 import gr.aueb.cf.e_commerce_app.dto.UserInsertDto;
 import gr.aueb.cf.e_commerce_app.dto.UserMoreInfoInsertDto;
@@ -21,6 +22,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -63,7 +65,11 @@ public class UserService {
     public void updateUserMoreInfo(UUID userId, UserMoreInfoInsertDto insertDto)
             throws AppObjectAlreadyExistsException, AppObjectNotFoundException, AppObjectAccessDeniedException {
 
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || auth.getName() == null) {
+            throw new AppObjectAccessDeniedException("auth", "Authentication information is missing");
+        }
+        String username = auth.getName();
         User currentUser = userRepository.findByUsername(username).orElseThrow(() -> new AppObjectNotFoundException("User", "The user for authentication does not found"));
 
         // Load user
@@ -92,9 +98,9 @@ public class UserService {
             info = new UserMoreInfo();
         }
 
-        if (insertDto.getRegion() != null) {
-            Region region = regionRepository.findByName(insertDto.getRegion())
-                    .orElseThrow(() -> new AppObjectNotFoundException("Region", "The region: " + insertDto.getRegion() + " was not found"));
+        if (insertDto.getRegionId() != null) {
+            Region region = regionRepository.findById(insertDto.getRegionId())
+                    .orElseThrow(() -> new AppObjectNotFoundException("Region", "The region: " + insertDto.getRegionId() + " was not found"));
             info.setRegion(region);
         } else {
             info.setRegion(null);
