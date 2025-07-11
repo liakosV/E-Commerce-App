@@ -14,6 +14,7 @@ public class OrderReadOnlyDto {
 
     private Long orderId;
     private Long userId;
+    private Boolean isActive;
     private List<OrderItemReadOnlyDto> items;
     private BigDecimal totalAmount;
 }
