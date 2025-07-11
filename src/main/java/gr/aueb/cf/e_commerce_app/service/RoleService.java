@@ -8,7 +8,9 @@ import gr.aueb.cf.e_commerce_app.dto.RoleReadOnlyDto;
 import gr.aueb.cf.e_commerce_app.mapper.Mapper;
 import gr.aueb.cf.e_commerce_app.model.static_data.Role;
 import gr.aueb.cf.e_commerce_app.repository.RoleRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +22,7 @@ public class RoleService {
     private final RoleRepository roleRepository;
     private final Mapper mapper;
 
+    @Transactional(rollbackOn = Exception.class)
     public RoleReadOnlyDto createRole(RoleInsertDto roleInsertDto) throws AppObjectAlreadyExistsException {
 
         if (roleRepository.findByName(roleInsertDto.getName()).isPresent()) {
@@ -30,12 +33,7 @@ public class RoleService {
         return mapper.mapToRoleReadOnlyDto(savedRole);
     }
 
-    public List<RoleReadOnlyDto> getAllRoles() {
-        return roleRepository.findAll().stream()
-                .map(mapper::mapToRoleReadOnlyDto)
-                .toList();
-    }
-
+    @Transactional(rollbackOn = Exception.class)
     public void removeRole(Long id) throws AppObjectNotFoundException, AppObjectIllegalStateException {
         Role role = roleRepository.findById(id)
                 .orElseThrow(() -> new AppObjectNotFoundException("Role", "Role with id: " + id + " not found"));
@@ -45,6 +43,13 @@ public class RoleService {
         }
 
         roleRepository.delete(role);
+    }
+
+    public List<RoleReadOnlyDto> getAllRoles() {
+
+        return roleRepository.findAll(Sort.by("id")).stream()
+                .map(mapper::mapToRoleReadOnlyDto)
+                .toList();
     }
 
 }
