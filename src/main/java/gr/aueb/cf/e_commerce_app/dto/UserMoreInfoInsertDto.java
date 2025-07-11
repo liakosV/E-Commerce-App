@@ -14,11 +14,11 @@ public class UserMoreInfoInsertDto {
 
     private Gender gender;
 
-    private String region;
+    private Long regionId;
 
     private String address;
 
-    private Integer addressNumber;
+    private String addressNumber;
 
     @Pattern(regexp = "^\\d{10}$")
     private String phoneNumber;
