@@ -2,6 +2,7 @@ package gr.aueb.cf.e_commerce_app.authentication;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -30,10 +31,15 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/auth/authenticate", "/api/users/save", "/api/users/update/**").permitAll()
                         .requestMatchers("/api/users/**").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/roles").permitAll()
                         .requestMatchers("/api/roles/**").hasAuthority("ADMIN")
-                        .requestMatchers("/api/category/**").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/categories").permitAll()
+                        .requestMatchers("/api/categories/**").hasAuthority("ADMIN")
                         .requestMatchers("/api/products/save", "/api/products/remove/**").hasAnyAuthority("ADMIN", "SELLER")
+                        .requestMatchers(HttpMethod.GET, "/api/orders").hasAuthority("ADMIN")
                         .requestMatchers("/api/orders/**").hasAnyAuthority("ADMIN", "SELLER", "CUSTOMER")
+                        .requestMatchers(HttpMethod.GET, "/api/regions").permitAll()
+                        .requestMatchers("/api/regions/**").hasAuthority("ADMIN")
                         .requestMatchers("/styles/**", "/js/**", "/img/**").permitAll()
                         .anyRequest().permitAll()
                 )
