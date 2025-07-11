@@ -26,5 +26,5 @@ public class ProductInsertDto {
     private Integer quantity;
 
     @NotNull(message = "Category must not be null")
-    private CategoryInsertDto category;
+    private Long categoryId;
 }
