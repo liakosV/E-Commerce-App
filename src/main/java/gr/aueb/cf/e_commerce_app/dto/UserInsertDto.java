@@ -32,9 +32,6 @@ public class UserInsertDto {
     @NotNull(message = "The role must not be null")
     private String roleName;
 
-    @NotNull(message = "Is active must not be null")
-    private Boolean isActive;
-
     @Valid
     private UserMoreInfoInsertDto userMoreInfo;
 }
