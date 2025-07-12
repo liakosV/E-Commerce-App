@@ -12,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 public class OrderReadOnlyDto {
 
+    private String uuid;
     private Long orderId;
     private Long userId;
     private Boolean isActive;
