@@ -25,7 +25,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -37,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class UserServiceTest {
+class UserServiceTest {
 
     @Mock private UserRepository userRepository;
     @Mock private UserMoreInfoRepository userMoreInfoRepository;
@@ -154,6 +153,40 @@ public class UserServiceTest {
 
         assertEquals("john_doe", result.getUsername());
         assertTrue(user.getIsActive());
+    }
+
+    // ----------- Tests for deactivateUser() ------------
+
+    @Test
+    void deactivateUser_shouldToggleIsActiveFlagAndSave() throws AppObjectNotFoundException {
+        // given
+        String uuid = "test-uuid";
+        User user = new User();
+        user.setUuid(uuid);
+        user.setIsActive(true); // initially active
+
+        when(userRepository.findByUuid(uuid)).thenReturn(Optional.of(user));
+
+        // when
+        userService.deactivateUser(uuid);
+
+        // then
+        assertFalse(user.getIsActive()); // toggled to false
+        verify(userRepository).save(user);
+    }
+
+    @Test
+    void deactivateUser_shouldThrowExceptionWhenUserNotFound() {
+        // given
+        String uuid = "missing-uuid";
+        when(userRepository.findByUuid(uuid)).thenReturn(Optional.empty());
+
+        // when + then
+        AppObjectNotFoundException thrown = assertThrows(AppObjectNotFoundException.class, () ->
+                userService.deactivateUser(uuid));
+
+        assertEquals("User not found", thrown.getMessage());
+        verify(userRepository, never()).save(any());
     }
 
     // ----------- Tests for updateUserMoreInfo() ------------
