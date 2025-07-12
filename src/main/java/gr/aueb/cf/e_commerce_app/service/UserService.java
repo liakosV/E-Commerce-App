@@ -61,6 +61,14 @@ public class UserService {
         return mapper.mapToUserReadOnlyDto(savedUser);
     }
 
+    public void deactivateUser(String userUuid) throws AppObjectNotFoundException {
+        User user = userRepository.findByUuid(userUuid)
+                .orElseThrow(() -> new AppObjectNotFoundException("User", "User not found"));
+
+        user.setIsActive(!user.getIsActive());
+        userRepository.save(user);
+    }
+
     @Transactional(rollbackOn = Exception.class)
     public void updateUserMoreInfo(UUID userId, UserMoreInfoInsertDto insertDto)
             throws AppObjectAlreadyExistsException, AppObjectNotFoundException, AppObjectAccessDeniedException {

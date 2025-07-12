@@ -97,6 +97,19 @@ public class UserRestController {
     }
 
     @Operation(
+            summary = "Changes the status of the user to active or inactive",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "User status changed", content = @Content),
+                    @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
+            }
+    )
+    @DeleteMapping("/{userUuid}")
+    public void deactivateUser(@PathVariable String userUuid) throws AppObjectNotFoundException {
+        userService.deactivateUser(userUuid);
+        LOGGER.info("User status changed");
+    }
+
+    @Operation(
             summary = "Update the userMoreInfo",
             responses = {
                     @ApiResponse(
