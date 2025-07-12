@@ -224,6 +224,7 @@ public class Mapper {
 
         dto.setOrderId(order.getId());
         dto.setUserId(order.getUser().getId());
+        dto.setUuid(order.getUuid());
         dto.setItems(orderItemsDtos);
         dto.setTotalAmount(totalAmount);
         dto.setIsActive(order.getIsActive());
