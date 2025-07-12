@@ -15,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Sort;
 
 import java.util.Collections;
 import java.util.List;
@@ -105,7 +106,7 @@ class RegionServiceTest {
         RegionReadOnlyDto dto1 = new RegionReadOnlyDto(1L, "Europe");
         RegionReadOnlyDto dto2 = new RegionReadOnlyDto(2L, "Asia");
 
-        Mockito.when(regionRepository.findAll()).thenReturn(List.of(region1, region2));
+        Mockito.when(regionRepository.findAll(Sort.by("id"))).thenReturn(List.of(region1, region2));
         Mockito.when(mapper.mapToRegionReadOnlyDto(region1)).thenReturn(dto1);
         Mockito.when(mapper.mapToRegionReadOnlyDto(region2)).thenReturn(dto2);
 
