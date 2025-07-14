@@ -45,7 +45,7 @@ public class ProductRestController {
                     @ApiResponse(responseCode = "403", description = "You are not authorized to make this call", content = @Content)
             }
     )
-    @PostMapping("/save")
+    @PostMapping
     public ResponseEntity<ProductReadOnlyDto> saveProduct(@Valid @RequestBody ProductInsertDto insertDto, BindingResult bindingResult)
             throws AppObjectAlreadyExistsException, AppObjectNotFoundException, ValidationException {
 
@@ -67,7 +67,7 @@ public class ProductRestController {
                     @ApiResponse(responseCode = "404", description = "Product not found", content = @Content)
             }
     )
-    @DeleteMapping("/remove/{uuid}")
+    @DeleteMapping("/{uuid}")
     public void removeProduct(@PathVariable String uuid) throws AppObjectNotFoundException {
         productService.removeProduct(uuid);
     }
