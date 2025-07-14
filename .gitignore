@@ -11,12 +11,6 @@ logs
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
-/frontend/node_modules/
-/frontend/dist/
-.angular/
-/frontend/.angular/cache/
-/frontend/.angular/config.json
-/frontend/package-lock.json
 
 ### STS ###
 .apt_generated
