@@ -1,0 +1,9 @@
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6">
+  <mat-card
+    class="cursor-pointer hover:shadow-xl transition"
+    *ngFor="let category of categories"
+    (click)="goToCategory(category.id)"
+  >
+    <mat-card-title class="text-center">{{ category.name }}</mat-card-title>
+  </mat-card>
+</div>
