@@ -1,47 +1,103 @@
-HELP.md
-.gradle
-build/
 .idea/
-gradle
-gradlew
-gradlew.bat
-logs
-.log
-.class
-!gradle/wrapper/gradle-wrapper.jar
-!**/src/main/**/build/
-!**/src/test/**/build/
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-bin/
-!**/src/main/**/bin/
-!**/src/test/**/bin/
+# === Backend Ignore Rules ===
 
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-out/
-!**/src/main/**/out/
-!**/src/test/**/out/
+# Build
+/Backend/e-commerce-app/build/
+/Backend/e-commerce-app/target/
+/Backend/e-commerce-app/out/
+/Backend/e-commerce-app/HELP.md
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
+# IntelliJ IDEA
+/Backend/e-commerce-app/.idea/
+/Backend/e-commerce-app/*.iws
+/Backend/e-commerce-app/*.iml
+/Backend/e-commerce-app/*.ipr
 
-### VS Code ###
-.vscode/
+# VS Code
+/Backend/e-commerce-app/.vscode/
 
+# Gradle
+/Backend/e-commerce-app/.gradle
+/Backend/e-commerce-app/gradlew
+/Backend/e-commerce-app/gradlew.bat
+/Backend/e-commerce-app/gradle/
+/Backend/e-commerce-app/logs
+/Backend/e-commerce-app/*.log
+/Backend/e-commerce-app/*.class
 
-.idea/
+# STS
+/Backend/e-commerce-app/.apt_generated
+/Backend/e-commerce-app/.classpath
+/Backend/e-commerce-app/.factorypath
+/Backend/e-commerce-app/.project
+/Backend/e-commerce-app/.settings
+/Backend/e-commerce-app/.springBeans
+/Backend/e-commerce-app/.sts4-cache
+/Backend/e-commerce-app/bin/
+
+# NetBeans
+/Backend/e-commerce-app/nbproject/private/
+/Backend/e-commerce-app/nbbuild/
+/Backend/e-commerce-app/dist/
+/Backend/e-commerce-app/nbdist/
+/Backend/e-commerce-app/.nb-gradle/
+
+# Exclusions (keep these files)
+/Backend/e-commerce-app/gradle/wrapper/gradle-wrapper.jar
+!/Backend/e-commerce-app/**/src/main/**/build/
+/Backend/e-commerce-app/**/src/test/**/build/
+!/Backend/e-commerce-app/**/src/main/**/bin/
+/Backend/e-commerce-app/**/src/test/**/bin/
+!/Backend/e-commerce-app/**/src/main/**/out/
+/Backend/e-commerce-app/**/src/test/**/out/
+
+# === Frontend Ignore Rules ===
+
+/frontend/dist/
+/frontend/tmp/
+/frontend/out-tsc/
+/frontend/bazel-out/
+
+/frontend/node_modules/
+/frontend/npm-debug.log
+/frontend/yarn-error.log
+
+# IDEs and editors
+/frontend/.idea/
+/frontend/.project
+/frontend/.classpath
+/frontend/.c9/
+/frontend/*.launch
+/frontend/.settings/
+/frontend/*.sublime-workspace
+
+# VS Code
+/frontend/.vscode
+/frontend/.vscode/*
+!/frontend/.vscode/settings.json
+!/frontend/.vscode/tasks.json
+!/frontend/.vscode/launch.json
+!/frontend/.vscode/extensions.json
+/frontend/.history/*
+
+# Miscellaneous
+/frontend/.angular/cache/
+/frontend/.sass-cache/
+/frontend/connect.lock
+/frontend/coverage/
+/frontend/libpeerconnection.log
+/frontend/testem.log
+/frontend/typings
+
+# System files
+/frontend/.DS_Store
+/frontend/Thumbs.db
+
+# === Global OS + Editor Junk ===
+
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.tmp
