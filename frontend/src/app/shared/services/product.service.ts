@@ -3,13 +3,14 @@ import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 import { Product } from '../interfaces/product';
 import { Page } from '../interfaces/page';
+import { environment } from '../../../environments/environment.development';
 
+
+const API_URL = `${environment.apiURL}/api/products`;
 @Injectable({
   providedIn: 'root'
 })
 export class ProductService {
-
-  private apiURL = 'http://localhost:8080/api/products';
   http: HttpClient = inject(HttpClient);
   
 
@@ -21,8 +22,12 @@ export class ProductService {
     sort: string,
     direction: string
   ): Observable<Page<Product>> {
-    const url = `${this.apiURL}?page=${page}&size=${size}&sortBy=${sort}&sortDirection=${direction}`;
+    const url = `${API_URL}?page=${page}&size=${size}&sortBy=${sort}&sortDirection=${direction}`;
     return this.http.get<Page<Product>>(url);
+  }
+
+  getAllProductsUnpaged() :Observable<Product[]> {
+    return this.http.get<Product[]>(`${API_URL}/all`)
   }
   
 }
