@@ -1,0 +1,36 @@
+<header class="bg-gray-800 text-white p-4 flex justify-between items-center">
+  <a routerLink="/" class="cursor-pointer text-xl font-bold">MyShop</a>
+
+  <nav class="flex items-center space-x-6">
+    <a routerLink="/" class="hover:underline">Home</a>
+    <a routerLink="/categories" class="hover:underline">Categories</a>
+
+    <button mat-button [matMenuTriggerFor]="accountMenu" class="text-white">
+      {{ isUserLoggedIn ? user?.firstname || 'Account' : 'Account' }}
+      <mat-icon>arrow_drop_down</mat-icon>
+    </button>
+
+    <mat-menu #accountMenu="matMenu" xPosition="before">
+      <ng-container *ngIf="isUserLoggedIn; else loggedOut">
+        <button mat-menu-item routerLink="/account">
+          <mat-icon>person</mat-icon>
+          <span>Personal Info</span>
+        </button>
+        <button mat-menu-item (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          <span>Logout</span>
+        </button>
+      </ng-container>
+      <ng-template #loggedOut>
+        <button mat-menu-item routerLink="/login">
+          <mat-icon>login</mat-icon>
+          <span>Login</span>
+        </button>
+        <button mat-menu-item routerLink="/register">
+          <mat-icon>person_add</mat-icon>
+          <span>Register</span>
+        </button>
+      </ng-template>
+    </mat-menu>
+  </nav>
+</header>
