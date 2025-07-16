@@ -17,6 +17,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ProductService {
@@ -53,5 +55,12 @@ public class ProductService {
                 .orElseThrow(() -> new AppObjectNotFoundException("Product", "The product was not found"));
 
         productRepository.delete(product);
+    }
+
+    public List<ProductReadOnlyDto> getAllProductsUnpaged() {
+
+        return productRepository.findAll().stream()
+                .map(mapper::mapToProductReadOnlyDto)
+                .toList();
     }
 }

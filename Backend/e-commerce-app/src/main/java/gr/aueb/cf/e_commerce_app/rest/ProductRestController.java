@@ -20,6 +20,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/products")
 @RequiredArgsConstructor
@@ -96,5 +98,12 @@ public class ProductRestController {
         Page<ProductReadOnlyDto> productPage = productService.getPaginatedSortedProducts(page, size, sortBy, sortDirection);
 
         return new ResponseEntity<>(productPage, HttpStatus.OK);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<ProductReadOnlyDto>> getAllProductsUnpaged() {
+        List<ProductReadOnlyDto> productsList = productService.getAllProductsUnpaged();
+
+        return new ResponseEntity<>(productsList, HttpStatus.OK);
     }
 }
