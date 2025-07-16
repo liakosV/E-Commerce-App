@@ -45,7 +45,7 @@ public class RoleRestController {
                     @ApiResponse(responseCode = "400", description = "Validation failed", content = @Content)
             }
     )
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<RoleReadOnlyDto> createRole(@Valid @RequestBody RoleInsertDto roleInsertDto, BindingResult bindingResult)
             throws AppObjectAlreadyExistsException, ValidationException {
 
@@ -64,7 +64,7 @@ public class RoleRestController {
             }
 
     )
-    @DeleteMapping("remove/{id}")
+    @DeleteMapping("/{id}")
     public void removeRole(@PathVariable Long id) throws AppObjectNotFoundException, AppObjectIllegalStateException {
         roleService.removeRole(id);
     }

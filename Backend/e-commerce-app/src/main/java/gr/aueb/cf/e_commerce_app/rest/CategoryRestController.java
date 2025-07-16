@@ -45,7 +45,7 @@ public class CategoryRestController {
                     @ApiResponse(responseCode = "400", description = "Validation failed", content = @Content)
             }
     )
-    @PostMapping("/save")
+    @PostMapping
     public ResponseEntity<CategoryReadOnlyDto> saveCategory(@Valid @RequestBody CategoryInsertDto insertDto, BindingResult bindingResult) throws AppObjectAlreadyExistsException, ValidationException {
 
         if (bindingResult.hasErrors()) throw new ValidationException(bindingResult);
@@ -67,7 +67,7 @@ public class CategoryRestController {
                     @ApiResponse(responseCode = "409", description = "Cannot remove the category", content = @Content)
             }
     )
-    @DeleteMapping("remove/{id}")
+    @DeleteMapping("/{id}")
     public void removeCategory(@PathVariable Long id) throws AppObjectNotFoundException, AppObjectIllegalStateException {
         categoryService.removeCategory(id);
         LOGGER.info("Category with id: {} removed.", id);
