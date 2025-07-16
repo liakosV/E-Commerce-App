@@ -1,0 +1,24 @@
+<mat-card class="w-full max-w-md mx-auto mt-20 p-8 rounded-2xl shadow-lg border border-gray-200">
+  <h2 class="text-3xl font-semibold mb-6 text-center">Login</h2>
+
+  <form (ngSubmit)="onSubmit()" #f="ngForm" class="space-y-6">
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Username</mat-label>
+      <input matInput [(ngModel)]="username" name="username" required />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Password</mat-label>
+      <input matInput type="password" [(ngModel)]="password" name="password" required />
+    </mat-form-field>
+
+    <button
+      mat-flat-button
+      color="primary"
+      type="submit"
+      class="w-full py-3 rounded-lg text-white font-semibold tracking-wide"
+    >
+      Login
+    </button>
+  </form>
+</mat-card>
