@@ -1,10 +1,7 @@
 package gr.aueb.cf.e_commerce_app.dto;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,7 +23,8 @@ public class UserInsertDto {
     @Pattern(regexp = "^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[@#$%!^&*]).{8,}$", message = "Invalid Password")
     private String password;
 
-    @Email(message = "The email is invalid")
+    @Email(message = "The email is invalid. The email must be like: example@example.com")
+    @NotBlank(message = "The email must not be empty")
     private String email;
 
     @NotNull(message = "The role must not be null")
