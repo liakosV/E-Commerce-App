@@ -85,7 +85,7 @@ public class UserRestController {
                     @ApiResponse(responseCode = "409", description = "User already exists", content = @Content)
             }
     )
-    @PostMapping("/save")
+    @PostMapping
     public ResponseEntity<UserReadOnlyDto> saveUser(@Valid @RequestBody UserInsertDto userInsertDto, BindingResult bindingResult)
             throws ValidationException, AppObjectAlreadyExistsException, AppObjectNotFoundException {
 
@@ -125,7 +125,7 @@ public class UserRestController {
                     @ApiResponse(responseCode = "409", description = "Phone number already exists", content = @Content)
             }
     )
-    @PutMapping("/update/{userId}")
+    @PutMapping("/{userId}")
     public void updateUserMoreInfo(
             @PathVariable UUID userId,
             @Valid @RequestBody UserMoreInfoInsertDto insertDto,
