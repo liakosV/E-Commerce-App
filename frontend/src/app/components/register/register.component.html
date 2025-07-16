@@ -1,0 +1,56 @@
+<mat-card class="w-full max-w-lg mx-auto mt-16 p-8 rounded-2xl shadow-lg border border-gray-200">
+  <h2 class="text-3xl font-semibold mb-6 text-center">Register</h2>
+
+  <form (ngSubmit)="onSubmit()" #f="ngForm" class="space-y-6">
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Username</mat-label>
+      <input matInput name="username" [(ngModel)]="user.username" required />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>First Name</mat-label>
+      <input matInput name="firstname" [(ngModel)]="user.firstname" required />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Last Name</mat-label>
+      <input matInput name="lastname" [(ngModel)]="user.lastname" required />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Password</mat-label>
+      <input
+        matInput
+        type="password"
+        name="password"
+        [(ngModel)]="user.password"
+        required
+        pattern="^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[@#$%!^&*]).{8,}$"
+      />
+      <mat-hint>At least 8 characters with uppercase, lowercase, digit, and symbol</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Email</mat-label>
+      <input matInput type="email" name="email" [(ngModel)]="user.email" required email />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Role</mat-label>
+      <mat-select name="roleName" [(ngModel)]="user.roleName" required>
+        <mat-option value="ADMIN">Admin</mat-option>
+        <mat-option value="CUSTOMER">Customer</mat-option>        
+        <mat-option value="SELLER">Seller</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <button
+      mat-flat-button
+      color="primary"
+      class="w-full py-3 rounded-lg text-white font-semibold tracking-wide"
+      type="submit"
+    >
+      Register
+    </button>
+  </form>
+</mat-card>
