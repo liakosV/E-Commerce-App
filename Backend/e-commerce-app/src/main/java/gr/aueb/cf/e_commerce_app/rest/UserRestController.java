@@ -137,4 +137,10 @@ public class UserRestController {
         userService.updateUserMoreInfo(userId, insertDto);
         LOGGER.info("User infos updated successfully.");
     }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserReadOnlyDto> getUser(@PathVariable String userId) throws AppObjectNotFoundException {
+        UserReadOnlyDto userReadOnlyDto = userService.getUserByUuid(userId);
+        return new ResponseEntity<>(userReadOnlyDto, HttpStatus.OK);
+    }
 }
