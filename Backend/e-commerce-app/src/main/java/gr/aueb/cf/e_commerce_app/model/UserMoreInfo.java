@@ -19,9 +19,6 @@ public class UserMoreInfo extends AbstractEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "profile_photo_url")
-    private String profilePhotoUrl;
-
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
@@ -38,12 +35,6 @@ public class UserMoreInfo extends AbstractEntity {
     @Size(min = 10)
     private String phoneNumber;
 
-//    @OneToOne
-//    @JoinColumn(name = "user_id")
-//    private User user;
-
     @OneToOne(mappedBy = "userMoreInfo")
     private User user;
-
-
 }

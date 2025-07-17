@@ -117,7 +117,6 @@ public class Mapper {
         userMoreInfo.setAddress(dto.getAddress());
         userMoreInfo.setAddressNumber(dto.getAddressNumber());
         userMoreInfo.setPhoneNumber(dto.getPhoneNumber());
-        userMoreInfo.setProfilePhotoUrl(dto.getProfilePhotoUrl());
 
         return userMoreInfo;
     }
@@ -136,7 +135,6 @@ public class Mapper {
         dto.setGender(userMoreInfo.getGender());
         dto.setAddress(userMoreInfo.getAddress());
         dto.setAddressNumber(userMoreInfo.getAddressNumber());
-        dto.setProfilePhotoUrl(userMoreInfo.getProfilePhotoUrl());
 
         Region region = userMoreInfo.getRegion();
         dto.setRegionName(region != null ? region.getName() : null);

@@ -22,6 +22,4 @@ public class UserMoreInfoInsertDto {
 
     @Pattern(regexp = "^\\d{10}$")
     private String phoneNumber;
-
-    private String profilePhotoUrl;
 }
