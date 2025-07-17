@@ -12,6 +12,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
@@ -29,7 +32,11 @@ public class AuthenticationService {
         User user = userRepository.findByUsername(authentication.getName())
                 .orElseThrow(() -> new AppObjectNotAuthorizedException("User", "User not authorized"));
 
-        String token = jwtService.generateToken(authentication.getName(), user.getRole().getName());
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("role", user.getRole().getName());
+        claims.put("uuid", user.getUuid());
+
+        String token = jwtService.generateToken(authentication.getName(), claims);
         return new AuthenticationResponseDto(user.getFirstname(), user.getLastname(), token);
     }
 }
