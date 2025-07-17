@@ -45,9 +45,6 @@ public class User extends AbstractEntity implements UserDetails {
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
-//    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private  UserMoreInfo userMoreInfo;
-
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_more_info_id", referencedColumnName = "id") // owns the FK
     private UserMoreInfo userMoreInfo;
