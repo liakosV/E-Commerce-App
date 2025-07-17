@@ -118,7 +118,6 @@ public class UserService {
         if (insertDto.getGender() != null) info.setGender(insertDto.getGender());
         if (insertDto.getAddress() != null) info.setAddress(insertDto.getAddress());
         if (insertDto.getAddressNumber() != null) info.setAddressNumber(insertDto.getAddressNumber());
-        if (insertDto.getProfilePhotoUrl() != null) info.setProfilePhotoUrl(insertDto.getProfilePhotoUrl());
 
         info.setUser(user);
         user.setUserMoreInfo(info);
@@ -132,5 +131,11 @@ public class UserService {
         Pageable pageable = PageRequest.of(page, size, sort);
 
         return userRepository.findAll(pageable).map(mapper::mapToUserReadOnlyDto);
+    }
+
+    public UserReadOnlyDto getUserByUuid(String userId) throws AppObjectNotFoundException {
+        User user = userRepository.findByUuid(userId)
+                .orElseThrow(() -> new AppObjectNotFoundException("User", "User not found"));
+        return mapper.mapToUserReadOnlyDto(user);
     }
 }
