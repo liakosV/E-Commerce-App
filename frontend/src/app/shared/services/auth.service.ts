@@ -18,6 +18,11 @@ export class AuthService {
 
   constructor() {}
 
+  getUserId(): string | null  {
+    const decoded = this.getDecodedToken();
+    return decoded?.uuid || null;
+  }
+
   private hasToken(): boolean {
     return !!localStorage.getItem('token');
   }
@@ -56,4 +61,29 @@ login(credentials: Credentials): Observable<any> {
     }
     return null;
   }
+
+  getDecodedToken(): any | null {
+  const token = localStorage.getItem('token');
+  if (!token) return null;
+  try {
+    return jwtDecode(token);
+  } catch (error) {
+    return null;
+  }
+}
+
+getUserRole(): string | null {
+  const decoded = this.getDecodedToken();
+  return decoded?.role || null; // Adjust key based on your token payload structure
+}
+
+hasRole(role: string): boolean {
+  const userRole = this.getUserRole();
+  return userRole === role;
+}
+
+hasAnyRole(roles: string[]): boolean {
+  const userRole = this.getUserRole();
+  return roles.includes(userRole || '');
+}
 }
