@@ -73,7 +73,7 @@ public class OrderRestController {
             }
     )
     @DeleteMapping("/{orderUuid}")
-    public void deactivateOrder(@PathVariable UUID orderUuid) throws AppObjectNotFoundException {
+    public void deactivateOrder(@PathVariable String orderUuid) throws AppObjectNotFoundException {
         orderService.deactivateOrder(orderUuid);
         LOGGER.info("Order status changed.");
     }

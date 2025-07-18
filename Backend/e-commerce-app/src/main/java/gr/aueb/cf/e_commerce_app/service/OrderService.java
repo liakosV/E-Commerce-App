@@ -48,7 +48,7 @@ public class OrderService {
         List<OrderItem> orderItems = new ArrayList<>();
 
         for (OrderItemInsertDto itemInsertDto : dto.getItems()) {
-            Product product = productRepository.findById(itemInsertDto.getProductId())
+            Product product = productRepository.findByUuid(itemInsertDto.getProductUuid())
                     .orElseThrow(() -> new AppObjectNotFoundException("Order", "The product was not found"));
 
             if (itemInsertDto.getQuantity() <= 0) {
@@ -82,8 +82,8 @@ public class OrderService {
         return mapper.mapToOrderReadOnlyDto(saveOrder);
     }
 
-    public void deactivateOrder(UUID orderUuid) throws AppObjectNotFoundException {
-        Order order = orderRepository.findByUuid(String.valueOf(orderUuid))
+    public void deactivateOrder(String orderUuid) throws AppObjectNotFoundException {
+        Order order = orderRepository.findByUuid(orderUuid)
                 .orElseThrow(() -> new AppObjectNotFoundException("Order", "The order was not found"));
 
         order.setIsActive(!order.getIsActive());
