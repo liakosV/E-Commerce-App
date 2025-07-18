@@ -10,3 +10,12 @@ export interface Product {
     name: string;
   }
 }
+
+export interface ProductInsertDto {
+  name: string;
+  description: string;
+  price: number;
+  quantity: number;
+  categoryId: number;
+}
+
