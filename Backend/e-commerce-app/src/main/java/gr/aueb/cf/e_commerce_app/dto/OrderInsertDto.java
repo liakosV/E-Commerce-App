@@ -10,7 +10,5 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderInsertDto {
-
-//    private Long userId;
     private List<OrderItemInsertDto> items;
 }
