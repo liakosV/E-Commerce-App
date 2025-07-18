@@ -1,0 +1,46 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="max-w-md mx-auto mt-8 p-6 bg-gray-50 rounded-lg shadow-md flex flex-col space-y-5">
+  <span class="text-center font-bold text-2xl">Personal Info</span>
+
+  <hr>
+
+  <mat-form-field appearance="fill" class="w-full">
+    <mat-label>Gender</mat-label>
+    <mat-select formControlName="gender">
+      <mat-option value="MALE">Male</mat-option>
+      <mat-option value="FEMALE">Female</mat-option>
+      <mat-option value="OTHER">Other</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="w-full">
+    <mat-label>Region</mat-label>
+    <mat-select formControlName="regionId">
+      <mat-option *ngFor="let region of regions" [value]="region.id">{{ region.name }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="w-full">
+    <mat-label>Address</mat-label>
+    <input matInput formControlName="address" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="w-full">
+    <mat-label>Address Number</mat-label>
+    <input matInput formControlName="addressNumber" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="w-full">
+    <mat-label>Phone Number</mat-label>
+    <input matInput formControlName="phoneNumber" />
+  </mat-form-field>
+
+  <button 
+    mat-raised-button 
+    color="primary" 
+    type="submit" 
+    [disabled]="form.invalid"
+    class="self-end px-5 py-2 font-semibold uppercase bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed"
+  >
+    Save
+  </button>
+</form>
