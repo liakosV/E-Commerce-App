@@ -1,3 +1,5 @@
+import { UserMoreInfo } from "./user-more-info"
+
 export interface User {
   username: string,
   firstname: string,
@@ -5,7 +7,6 @@ export interface User {
   password: string,
   email: string,
   roleName: string
-
 }
 
 export interface Credentials {
@@ -23,4 +24,15 @@ export interface AuthenticationResponseDto {
   firstname: string,
   lastname: string,
   token: string
+}
+
+export interface UserReadOnlyDto {
+  id: string;
+  username: string;
+  firstname: string;
+  lastname: string;
+  password: string;
+  email: string;
+  roleName: string;
+  userMoreInfo?: UserMoreInfo;
 }
