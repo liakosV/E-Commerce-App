@@ -3,18 +3,71 @@
 
   <div *ngIf="products.length > 0; else noProducts">
     <table mat-table [dataSource]="products" class="mat-elevation-z2 w-full">
+
+      <!-- Name -->
       <ng-container matColumnDef="name">
         <th mat-header-cell *matHeaderCellDef>Name</th>
         <td mat-cell *matCellDef="let product">{{ product.name }}</td>
       </ng-container>
 
-      <ng-container matColumnDef="price">
-        <th mat-header-cell *matHeaderCellDef>Price</th>
-        <td mat-cell *matCellDef="let product">{{ product.price | currency }}</td>
+      <!-- Description -->
+      <ng-container matColumnDef="description">
+        <th mat-header-cell *matHeaderCellDef>Description</th>
+        <td mat-cell *matCellDef="let product">{{ product.description }}</td>
       </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="['name', 'price']"></tr>
-      <tr mat-row *matRowDef="let row; columns: ['name', 'price']"></tr>
+      <!-- Price -->
+      <ng-container matColumnDef="price">
+        <th mat-header-cell *matHeaderCellDef>Price</th>
+        <td mat-cell *matCellDef="let product">{{ product.price | currency:'EUR' }}</td>
+      </ng-container>
+
+      <!-- Quantity Available -->
+      <ng-container matColumnDef="quantity">
+        <th mat-header-cell *matHeaderCellDef>In Stock</th>
+        <td mat-cell *matCellDef="let product">{{ product.quantity }}</td>
+      </ng-container>
+
+      <!-- Add to cart / popup -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let product">
+          <!-- Add to cart icon -->
+          <button
+            mat-icon-button
+            color="primary"
+            (click)="togglePopup(product.uuid)"
+            matTooltip="Add to Cart"
+            [disabled]="product.quantity === 0"
+            *ngIf="!popupOpen[product.uuid]"
+          >
+            <mat-icon>add_shopping_cart</mat-icon>
+          </button>
+
+          <!-- Quantity selector popup -->
+          <div
+            *ngIf="popupOpen[product.uuid]"
+            class="flex items-center space-x-2 mt-2 bg-gray-100 p-2 rounded shadow-md w-max"
+          >
+            <input
+              type="number"
+              min="1"
+              [max]="product.quantity"
+              [(ngModel)]="selectedQuantities[product.uuid]"
+              class="w-16 border p-1 rounded"
+            />
+            <button mat-raised-button color="accent" (click)="addToCart(product)">
+              Confirm
+            </button>
+            <button mat-icon-button (click)="togglePopup(product.uuid)">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
   </div>
 
