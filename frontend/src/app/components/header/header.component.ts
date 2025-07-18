@@ -22,13 +22,15 @@ import { MatIconModule } from '@angular/material/icon';
   styleUrl: './header.component.css'
 })
 export class HeaderComponent implements OnInit, OnDestroy {
+  authService = inject(AuthService);
+
   isUserLoggedIn = false;
   user: {firstname: string; lastname: string} | null = null;
   dropdownOpen = false;
 
   private sub?: Subscription;
 
-  constructor(private authService: AuthService) {}
+  constructor() {}
 
   ngOnInit() {
     this.sub = this.authService.isLoggedIn$.subscribe((loggedIn) => {
