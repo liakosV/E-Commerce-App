@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
-import { Product } from '../interfaces/product';
+import { Product, ProductInsertDto } from '../interfaces/product';
 import { Page } from '../interfaces/page';
 import { environment } from '../../../environments/environment.development';
 
@@ -28,6 +28,10 @@ export class ProductService {
 
   getAllProductsUnpaged() :Observable<Product[]> {
     return this.http.get<Product[]>(`${API_URL}/all`)
+  }
+
+  createProduct(product: ProductInsertDto): Observable<Product> {
+    return this.http.post<Product>(`${API_URL}`, product)
   }
   
 }
