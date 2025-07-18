@@ -71,7 +71,7 @@ class OrderServiceTest {
         order.setIsActive(true);
 
         orderItemInsertDto = new OrderItemInsertDto();
-        orderItemInsertDto.setProductId(1L);
+        orderItemInsertDto.setProductUuid("1");
         orderItemInsertDto.setQuantity(2);
 
         orderInsertDto = new OrderInsertDto();
@@ -147,7 +147,7 @@ class OrderServiceTest {
 
     @Test
     void shouldToggleOrderActiveStatus() throws Exception {
-        UUID orderUuid = UUID.randomUUID();
+        String orderUuid = UUID.randomUUID().toString();
         order.setUuid(orderUuid.toString());
         order.setIsActive(true);
 
@@ -161,8 +161,8 @@ class OrderServiceTest {
 
     @Test
     void shouldThrow_WhenOrderToToggleNotFound() {
-        UUID orderUuid = UUID.randomUUID();
-        when(orderRepository.findByUuid(orderUuid.toString())).thenReturn(Optional.empty());
+        String orderUuid = UUID.randomUUID().toString();
+        when(orderRepository.findByUuid(orderUuid)).thenReturn(Optional.empty());
 
         assertThrows(AppObjectNotFoundException.class, () -> orderService.deactivateOrder(orderUuid));
     }

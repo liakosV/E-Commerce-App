@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderItemInsertDto {
-    private Long productId;
+    private String productUuid;
     private int quantity;
 }

@@ -238,7 +238,7 @@ public class Mapper {
      */
     public OrderItemReadOnlyDto mapToOrderItemReadOnlyDto(OrderItem orderItem) {
         OrderItemReadOnlyDto dto = new OrderItemReadOnlyDto();
-        dto.setProductId(orderItem.getProduct().getId());
+        dto.setProductUuid(orderItem.getProduct().getUuid());
         dto.setProductName(orderItem.getProduct().getName());
         dto.setUnitPrice(orderItem.getUnitPrice());
         dto.setQuantity(orderItem.getQuantity());
