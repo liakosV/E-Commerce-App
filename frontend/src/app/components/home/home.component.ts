@@ -92,7 +92,6 @@ addToCart(product: Product): void {
 
   this.snackbar.open('Added to cart', 'Close', { duration: 2000 });
 
-  // Close popup after adding
   this.popupOpen[product.uuid] = false;
   }
 
