@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../shared/services/auth.service';
@@ -10,6 +10,9 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { User } from '../../shared/interfaces/user';
+import { RoleService } from '../../shared/services/role.service';
+import { Role } from '../../shared/interfaces/role';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-register',
@@ -21,12 +24,14 @@ import { User } from '../../shared/interfaces/user';
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
+    MatTooltipModule
   ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css'
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnInit {
   auth = inject(AuthService);
+  roleService = inject(RoleService);
   router = inject(Router);
   snackBar = inject(MatSnackBar)
 
@@ -38,6 +43,23 @@ export class RegisterComponent {
     email: '',
     roleName: '',
   };
+
+  roles: Role[] = []
+
+  ngOnInit(): void {
+    this.roleService.getAllRoles().subscribe({
+      next: (roles) => {
+        this.roles = roles;
+
+        // This is for filtering the ADMIN role to not show in the dropbox.
+        // this.roles = roles.filter(role => role.name !== "ADMIN");
+      },
+      error: (err) => {
+        console.error("Failed to load roles", err);
+        this.snackBar.open("Failed to load roles", "Close", {duration: 5000});
+      }
+    })
+  }
 
   onSubmit() {
     this.auth.register(this.user).subscribe({
