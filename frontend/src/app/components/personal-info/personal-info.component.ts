@@ -2,7 +2,8 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormGroupDirective, FormGroupName, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../shared/services/auth.service';
 import { UserService } from '../../shared/services/user.service';
-import { Region, UserMoreInfo } from '../../shared/interfaces/user-more-info';
+import { UserMoreInfo } from '../../shared/interfaces/user-more-info';
+import { Region } from '../../shared/interfaces/region';
 
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -11,6 +12,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { RegionService } from '../../shared/services/region.service';
 
 @Component({
   selector: 'app-personal-info',
@@ -31,6 +34,8 @@ export class PersonalInfoComponent implements OnInit {
   fb = inject(FormBuilder);
   auth = inject(AuthService);
   userService = inject(UserService);
+  regionService = inject(RegionService)
+  snackbar = inject(MatSnackBar);
   regions: Region[] = [];
 
   form = this.fb.group({
@@ -48,7 +53,7 @@ export class PersonalInfoComponent implements OnInit {
   }
 
   loadPersonalInfo() {
-    const userId = this.auth.getUserId(); // assumes UUID from JWT
+    const userId = this.auth.getUserId();
     if (userId) {
       this.userService.getUserByUuid(userId).subscribe(user => {
         if (user.userMoreInfo) {
@@ -59,7 +64,7 @@ export class PersonalInfoComponent implements OnInit {
   }
 
   loadRegions() {
-    this.userService.getRegions().subscribe({
+    this.regionService.getRegions().subscribe({
       next: (regions) => {
         this.regions = regions;
       },
@@ -74,8 +79,13 @@ export class PersonalInfoComponent implements OnInit {
     if (!userId) return;
 
     const payload: UserMoreInfo = this.form.value;
-    this.userService.updateUserMoreInfo(userId, payload).subscribe(() => {
-      // success handling
+    this.userService.updateUserMoreInfo(userId, payload).subscribe({
+      next: () => {
+        this.snackbar.open("Peronal infos updated successfully", "Close", {duration: 3000});
+      },
+      error: (err) => {
+        this.snackbar.open("Update failed " + err.message, "Close", {duration: 5000});
+      }
     });
   }
 }
