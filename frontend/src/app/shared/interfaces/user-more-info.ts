@@ -5,8 +5,3 @@ export interface UserMoreInfo {
   addressNumber?: string | null;
   phoneNumber?: string | null;
 }
-
-export interface Region {
-  id: number;
-  name: string;
-}
