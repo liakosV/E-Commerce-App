@@ -33,5 +33,9 @@ export class ProductService {
   createProduct(product: ProductInsertDto): Observable<Product> {
     return this.http.post<Product>(`${API_URL}`, product)
   }
+
+  removeProduct(uuid: string): Observable<Product> {
+    return this.http.delete<Product>(`${API_URL}/${uuid}`);
+  }
   
 }
