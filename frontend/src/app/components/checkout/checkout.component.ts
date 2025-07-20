@@ -41,7 +41,7 @@ export class CheckoutComponent {
         this.router.navigate(['/']);
       },
       error: (err) => {
-        this.snackBar.open("Order failed" + err.message, "CLose", {duration: 5000});
+        this.snackBar.open("Order failed " + err.message, "CLose", {duration: 5000});
       }
     });
   }
