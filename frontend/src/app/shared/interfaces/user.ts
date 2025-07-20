@@ -27,11 +27,10 @@ export interface AuthenticationResponseDto {
 }
 
 export interface UserReadOnlyDto {
-  id: string;
+  uuid: string;
   username: string;
   firstname: string;
   lastname: string;
-  password: string;
   email: string;
   roleName: string;
   userMoreInfo?: UserMoreInfo;
