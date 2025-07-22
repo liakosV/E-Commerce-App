@@ -1,0 +1,33 @@
+<div class="p-4">
+  <h2 class="text-2xl font-bold mb-4">Role Settings</h2>
+
+  <div class="flex space-x-2 items-center mb-4">
+    <mat-form-field appearance="fill">
+      <mat-label>New Role Name</mat-label>
+      <input matInput [(ngModel)]="roleInsert.name" placeholder="Role Name">
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>New Role Description</mat-label>
+      <input matInput [(ngModel)]="roleInsert.description" placeholder="Role Description">
+    </mat-form-field>  
+
+    <button 
+      mat-flat-button
+      color="primary" 
+      (click)="createRole()" 
+      [disabled]="roleInsert.name.length === 0"
+      >
+      Create
+    </button>
+  </div>
+
+  <ul class="space-y-2">
+    <li *ngFor="let role of roles" class="flex justify-between items-center border p-2 rounded shadow-sm">
+      <span>{{role.name}}</span>
+      <span>{{role.description}}</span>
+      <button mat-icon-button color="warn" (click)="removeRole(role.id)">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </li>
+  </ul>
+</div>
