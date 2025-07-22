@@ -1,0 +1,20 @@
+<div class="p-4">
+  <h2 class="text-2xl font-bold mb-4">Category Settings</h2>
+
+  <div class="flex space-x-2 items-center mb-4">
+    <mat-form-field appearance="fill">
+      <mat-label>New Category</mat-label>
+      <input matInput [(ngModel)]="categoryInsert.name" placeholder="Category Name" />
+    </mat-form-field>
+    <button mat-flat-button color="primary" (click)="createCategory()" [disabled]="categoryInsert.name.length === 0">Create</button>
+  </div>
+
+  <ul class="space-y-2">
+    <li *ngFor="let category of categories" class="flex justify-between items-center border p-2 rounded shadow-sm">
+      <span>{{ category.name }}</span>
+      <button mat-icon-button color="warn" (click)="removeCategory(category.id)">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </li>
+  </ul>
+</div>
