@@ -27,7 +27,7 @@ public class UserInsertDto {
     @NotBlank(message = "The email must not be empty")
     private String email;
 
-    @NotNull(message = "The role must not be null")
+    @NotBlank(message = "The role must not be empty")
     private String roleName;
 
     @Valid
