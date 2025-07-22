@@ -188,7 +188,7 @@ public class Mapper {
      */
     public Category mapToCategoryEntity(CategoryInsertDto insertDto) {
         Category category = new Category();
-        category.setName(insertDto.getName());
+        category.setName(insertDto.getName().substring(0,1).toUpperCase() + insertDto.getName().substring(1).toLowerCase());
         return category;
     }
 
