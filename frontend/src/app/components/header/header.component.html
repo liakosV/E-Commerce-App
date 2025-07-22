@@ -16,7 +16,7 @@
 
     <mat-menu #accountMenu="matMenu" xPosition="before">
       <ng-container *ngIf="isUserLoggedIn; else loggedOut">
-        <button *ngIf="authService.hasRole('ADMIN')" mat-menu-item routerLink="/admin-settings">
+        <button *ngIf="authService.hasRole('ADMIN')" mat-menu-item routerLink="/admin">
           <mat-icon>key</mat-icon>
           <span>Admin Settings</span>
         </button>
