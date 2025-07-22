@@ -68,10 +68,12 @@ export class RegisterComponent implements OnInit {
         const errorObj = err?.error;
         
         if (errorObj && typeof errorObj === 'object') {
-          const messages = Object.values(errorObj).join(',\n');
-          this.snackBar.open(messages, 'Close', {
+          const messages = Object.values(errorObj).join(', \n');
+          this.snackBar.open(errorObj.description || messages, 'Close', {
             duration: 10000
           })
+          console.error( errorObj.description || messages);
+          
         } else {
           alert('Registration failed. Please try again.');
         }
