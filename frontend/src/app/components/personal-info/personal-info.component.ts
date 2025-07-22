@@ -78,13 +78,24 @@ export class PersonalInfoComponent implements OnInit {
     const userId = this.auth.getUserId();
     if (!userId) return;
 
+    if (!this.form.value.phoneNumber) {
+      this.form.value.phoneNumber = null;
+    }
+
     const payload: UserMoreInfo = this.form.value;
     this.userService.updateUserMoreInfo(userId, payload).subscribe({
       next: () => {
         this.snackbar.open("Peronal infos updated successfully", "Close", {duration: 3000});
       },
       error: (err) => {
-        this.snackbar.open("Update failed " + err.message, "Close", {duration: 5000});
+        const errorObj = err?.error;
+
+        if (errorObj && typeof errorObj === 'object') {
+          const messages = Object.values(errorObj).join('\n');
+          this.snackbar.open(messages, "Close", {duration: 5000});
+          console.error(messages);
+          
+        }
       }
     });
   }
