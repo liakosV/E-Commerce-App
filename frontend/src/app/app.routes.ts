@@ -9,6 +9,11 @@ import { AddProductComponent } from './components/add-product/add-product.compon
 import { roleGuard } from './shared/guards/role.guard';
 import { authGuard } from './shared/guards/auth.guard';
 import { CheckoutComponent } from './components/checkout/checkout.component';
+import { AdminSettingsComponent } from './components/admin-settings/admin-settings.component';
+import { RegionSettingsComponent } from './components/admin-settings/region-settings/region-settings.component';
+import { RoleSettingsComponent } from './components/admin-settings/role-settings/role-settings.component';
+import { CategorySettingsComponent } from './components/admin-settings/category-settings/category-settings.component';
+import { UserSettingsComponent } from './components/admin-settings/user-settings/user-settings.component';
 
 export const routes: Routes = [
   {path: '', component: HomeComponent},
@@ -19,6 +24,17 @@ export const routes: Routes = [
   {path: 'checkout', component: CheckoutComponent, canActivate: [authGuard]},
   {path: 'account', component: PersonalInfoComponent, canActivate: [authGuard]},
   {path: 'add-product', component: AddProductComponent, canActivate: [roleGuard], data: {roles: ['ADMIN', 'SELLER']}},
+  {
+    path: 'admin', 
+    component: AdminSettingsComponent,
+    canActivate: [roleGuard], data: {roles: ['ADMIN']},
+    children: [
+      {path: 'region-settings', component: RegionSettingsComponent},
+      {path: 'role-settings', component: RoleSettingsComponent},
+      {path: 'category-settings', component: CategorySettingsComponent},
+      {path: 'user-settings', component: UserSettingsComponent}
+    ]
+  },
   {
   path: 'categories/:id/products',
   loadComponent: () =>
