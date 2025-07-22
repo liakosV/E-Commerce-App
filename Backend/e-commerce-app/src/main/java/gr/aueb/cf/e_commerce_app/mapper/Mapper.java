@@ -248,7 +248,7 @@ public class Mapper {
 
     public Region mapToRegionEntity(RegionInsertDto dto) {
         Region region = new Region();
-        region.setName(dto.getName());
+        region.setName(dto.getName().toUpperCase());
         return region;
     }
 
