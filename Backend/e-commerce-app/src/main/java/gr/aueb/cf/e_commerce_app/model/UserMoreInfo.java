@@ -32,7 +32,6 @@ public class UserMoreInfo extends AbstractEntity {
     private String addressNumber;
 
     @Column(name = "phone_number", unique = true)
-    @Size(min = 10)
     private String phoneNumber;
 
     @OneToOne(mappedBy = "userMoreInfo")
