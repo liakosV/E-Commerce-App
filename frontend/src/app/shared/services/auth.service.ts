@@ -72,18 +72,37 @@ login(credentials: Credentials): Observable<any> {
   }
 }
 
-getUserRole(): string | null {
-  const decoded = this.getDecodedToken();
-  return decoded?.role || null; // Adjust key based on your token payload structure
-}
+  getUserRole(): string | null {
+    const decoded = this.getDecodedToken();
+    return decoded?.role || null; // Adjust key based on your token payload structure
+  }
 
-hasRole(role: string): boolean {
-  const userRole = this.getUserRole();
-  return userRole === role;
-}
+  hasRole(role: string): boolean {
+    const userRole = this.getUserRole();
+    return userRole === role;
+  }
 
-hasAnyRole(roles: string[]): boolean {
-  const userRole = this.getUserRole();
-  return roles.includes(userRole || '');
-}
+  hasAnyRole(roles: string[]): boolean {
+    const userRole = this.getUserRole();
+    return roles.includes(userRole || '');
+  }
+
+  isTokenExpired(): boolean {
+    const token = localStorage.getItem('token');
+    if (!token) return true;
+
+    try {
+      const decoded = jwtDecode(token);
+      const exp = decoded.exp;
+      const now = Math.floor(Date.now() / 1000);
+
+      if (exp) {
+        return exp < now;
+      } else {
+        return true;
+      }
+    } catch (error) {
+      return true;
+    }
+  }
 }
