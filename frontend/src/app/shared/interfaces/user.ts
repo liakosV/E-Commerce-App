@@ -34,4 +34,5 @@ export interface UserReadOnlyDto {
   email: string;
   roleName: string;
   userMoreInfo?: UserMoreInfo;
+  isActive: boolean;
 }
