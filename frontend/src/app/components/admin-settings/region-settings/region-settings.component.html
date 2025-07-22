@@ -1,0 +1,22 @@
+<div class="p-4">
+  <h2 class="text-2xl font-bold mb-4">Region Settings</h2>
+
+  <!-- Add New Region -->
+  <div class="flex space-x-2 items-center mb-4">
+    <mat-form-field appearance="fill">
+      <mat-label>New Region</mat-label>
+      <input matInput [(ngModel)]="regionName" placeholder="Region Name" />
+    </mat-form-field>
+    <button mat-flat-button color="primary" (click)="createRegion()" [disabled]="regionName.length === 0">Create</button>
+  </div>
+
+  <!-- List of Regions -->
+  <ul class="space-y-2">
+    <li *ngFor="let region of regions" class="flex justify-between items-center border p-2 rounded shadow-sm">
+      <span>{{ region.name }}</span>
+      <button mat-icon-button color="warn" (click)="removeRegion(region.id)">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </li>
+  </ul>
+</div>
