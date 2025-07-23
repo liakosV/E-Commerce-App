@@ -158,7 +158,7 @@ class UserServiceTest {
     // ----------- Tests for deactivateUser() ------------
 
     @Test
-    void deactivateUser_shouldToggleIsActiveFlagAndSave() throws AppObjectNotFoundException {
+    void deactivateUser_shouldToggleIsActiveFlagAndSave() throws AppObjectNotFoundException, AppObjectAccessDeniedException {
         // given
         String uuid = "test-uuid";
         User user = new User();
