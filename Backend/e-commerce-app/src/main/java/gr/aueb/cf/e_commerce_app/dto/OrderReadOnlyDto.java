@@ -14,7 +14,7 @@ public class OrderReadOnlyDto {
 
     private String uuid;
     private Long orderId;
-    private Long userId;
+    private String username;
     private Boolean isActive;
     private List<OrderItemReadOnlyDto> items;
     private BigDecimal totalAmount;
