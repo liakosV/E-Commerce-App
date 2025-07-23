@@ -1,5 +1,6 @@
 package gr.aueb.cf.e_commerce_app.authentication;
 
+import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectAccessDeniedException;
 import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectNotAuthorizedException;
 import gr.aueb.cf.e_commerce_app.dto.AuthenticationRequestDto;
 import gr.aueb.cf.e_commerce_app.dto.AuthenticationResponseDto;
@@ -23,14 +24,18 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final UserRepository userRepository;
 
-    public AuthenticationResponseDto authenticate(AuthenticationRequestDto dto) throws AppObjectNotAuthorizedException {
+    public AuthenticationResponseDto authenticate(AuthenticationRequestDto dto) throws AppObjectNotAuthorizedException, AppObjectAccessDeniedException {
+
+        User user = userRepository.findByUsername(dto.getUsername())
+                .orElseThrow(() -> new AppObjectNotAuthorizedException("User", "User not authorized"));
+
+        if (!user.getIsActive()) {
+            throw new AppObjectAccessDeniedException("auth", "Your account have been deactivated.");
+        }
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword())
         );
-
-        User user = userRepository.findByUsername(authentication.getName())
-                .orElseThrow(() -> new AppObjectNotAuthorizedException("User", "User not authorized"));
 
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", user.getRole().getName());
