@@ -104,7 +104,7 @@ public class UserRestController {
             }
     )
     @DeleteMapping("/{userUuid}")
-    public void deactivateUser(@PathVariable String userUuid) throws AppObjectNotFoundException {
+    public void deactivateUser(@PathVariable String userUuid) throws AppObjectNotFoundException, AppObjectAccessDeniedException {
         userService.deactivateUser(userUuid);
         LOGGER.info("User status changed");
     }
