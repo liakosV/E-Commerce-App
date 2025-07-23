@@ -61,9 +61,13 @@ public class UserService {
         return mapper.mapToUserReadOnlyDto(savedUser);
     }
 
-    public void deactivateUser(String userUuid) throws AppObjectNotFoundException {
+    public void deactivateUser(String userUuid) throws AppObjectNotFoundException, AppObjectAccessDeniedException {
         User user = userRepository.findByUuid(userUuid)
                 .orElseThrow(() -> new AppObjectNotFoundException("User", "User not found"));
+
+        if (user.getRole().getName().equals("ADMIN")) {
+            throw new AppObjectAccessDeniedException("auth", "You cannot deactivate users with the ADMIN role");
+        }
 
         user.setIsActive(!user.getIsActive());
         userRepository.save(user);
