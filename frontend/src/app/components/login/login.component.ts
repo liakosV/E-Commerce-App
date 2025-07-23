@@ -8,6 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-login',
@@ -24,6 +25,7 @@ import { MatCardModule } from '@angular/material/card';
 })
 export class LoginComponent {
   auth: AuthService = inject(AuthService)
+  snackbar = inject(MatSnackBar);
   router = inject(Router);
 
   username = '';
@@ -32,7 +34,12 @@ export class LoginComponent {
   onSubmit() {
     this.auth.login({username: this.username, password: this.password}).subscribe({
       next: () => this.router.navigate(['/']),
-      error: (err) => alert('Login failed!')
+      error: (err) => {
+        const message = err?.error?.description || err?.error?.error;
+        this.snackbar.open('Login failed! Reason: ' +  message, "Close", {duration:5000});
+        console.error("ERROR" , err);
+         
+      }
     });
   }
 
