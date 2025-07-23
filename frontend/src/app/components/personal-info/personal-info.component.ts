@@ -14,6 +14,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { RegionService } from '../../shared/services/region.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-personal-info',
@@ -36,6 +37,8 @@ export class PersonalInfoComponent implements OnInit {
   userService = inject(UserService);
   regionService = inject(RegionService)
   snackbar = inject(MatSnackBar);
+  route = inject(ActivatedRoute);
+
   regions: Region[] = [];
 
   form = this.fb.group({
@@ -53,7 +56,8 @@ export class PersonalInfoComponent implements OnInit {
   }
 
   loadPersonalInfo() {
-    const userId = this.auth.getUserId();
+    const routeUuid = this.route.snapshot.paramMap.get('uuid');
+    const userId = routeUuid ||  this.auth.getUserId();
     if (userId) {
       this.userService.getUserByUuid(userId).subscribe(user => {
         if (user.userMoreInfo) {
@@ -75,7 +79,8 @@ export class PersonalInfoComponent implements OnInit {
   }
 
   onSubmit() {
-    const userId = this.auth.getUserId();
+    const routeUuid = this.route.snapshot.paramMap.get('uuid');
+    const userId = routeUuid ||  this.auth.getUserId();
     if (!userId) return;
 
     if (!this.form.value.phoneNumber) {
