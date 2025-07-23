@@ -221,7 +221,7 @@ public class Mapper {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         dto.setOrderId(order.getId());
-        dto.setUserId(order.getUser().getId());
+        dto.setUsername(order.getUser().getUsername());
         dto.setUuid(order.getUuid());
         dto.setItems(orderItemsDtos);
         dto.setTotalAmount(totalAmount);
