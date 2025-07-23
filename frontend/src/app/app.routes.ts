@@ -14,6 +14,7 @@ import { RegionSettingsComponent } from './components/admin-settings/region-sett
 import { RoleSettingsComponent } from './components/admin-settings/role-settings/role-settings.component';
 import { CategorySettingsComponent } from './components/admin-settings/category-settings/category-settings.component';
 import { UserSettingsComponent } from './components/admin-settings/user-settings/user-settings.component';
+import { OrderSettingsComponent } from './components/admin-settings/order-settings/order-settings.component';
 
 export const routes: Routes = [
   {path: '', component: HomeComponent},
@@ -23,16 +24,19 @@ export const routes: Routes = [
   {path: 'categories', component: CategoriesComponent},
   {path: 'checkout', component: CheckoutComponent, canActivate: [authGuard]},
   {path: 'account', component: PersonalInfoComponent, canActivate: [authGuard]},
+  {path: 'account/:uuid', component: PersonalInfoComponent, canActivate: [roleGuard], data: {roles: ['ADMIN']}},
   {path: 'add-product', component: AddProductComponent, canActivate: [roleGuard], data: {roles: ['ADMIN', 'SELLER']}},
   {
     path: 'admin', 
     component: AdminSettingsComponent,
     canActivate: [roleGuard], data: {roles: ['ADMIN']},
     children: [
-      {path: 'region-settings', component: RegionSettingsComponent},
-      {path: 'role-settings', component: RoleSettingsComponent},
-      {path: 'category-settings', component: CategorySettingsComponent},
-      {path: 'user-settings', component: UserSettingsComponent}
+      {path: 'region-settings', component: RegionSettingsComponent, canActivate: [roleGuard], data: {roles: ['ADMIN']} },
+      {path: 'role-settings', component: RoleSettingsComponent, canActivate: [roleGuard], data: {roles: ['ADMIN']}},
+      {path: 'category-settings', component: CategorySettingsComponent, canActivate: [roleGuard], data: {roles: ['ADMIN']}},
+      {path: 'user-settings', component: UserSettingsComponent, canActivate: [roleGuard], data: {roles: ['ADMIN']}},
+      {path: 'order-settings', component: OrderSettingsComponent, canActivate: [roleGuard], data: {roles: ['ADMIN']}}
+      
     ]
   },
   {
