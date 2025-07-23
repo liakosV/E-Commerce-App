@@ -10,6 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-user-settings',
@@ -18,7 +19,8 @@ import { MatIconModule } from '@angular/material/icon';
     MatButtonModule,
     MatInputModule,
     MatIconModule,
-    FormsModule
+    FormsModule,
+    RouterModule
   ],
   templateUrl: './user-settings.component.html',
   styleUrl: './user-settings.component.css'
@@ -26,6 +28,7 @@ import { MatIconModule } from '@angular/material/icon';
 export class UserSettingsComponent implements OnInit {
   userService = inject(UserService);
   snackbar = inject(MatSnackBar);
+  router = inject(Router);
 
   usersPage!: Page<UserReadOnlyDto>;
   sortBy = 'username';
@@ -68,9 +71,13 @@ export class UserSettingsComponent implements OnInit {
         this.loadUsers();
       },
       error: (err) => {
-        this.snackbar.open("Failed to change the status of the user", "Close", {duration: 5000});
+        this.snackbar.open("Failed to change the status of the user. Reason: " + err.error.description, "Close", {duration: 5000});
       }
     })
+  }
+
+  goToPersonalInfo(userId: string) {
+    this.router.navigate([`/account/${userId}`]);
   }
 
   changePage(newPage: number) {
