@@ -63,18 +63,18 @@ login(credentials: Credentials): Observable<any> {
   }
 
   getDecodedToken(): any | null {
-  const token = localStorage.getItem('token');
-  if (!token) return null;
-  try {
-    return jwtDecode(token);
-  } catch (error) {
-    return null;
+    const token = localStorage.getItem('token');
+    if (!token) return null;
+    try {
+      return jwtDecode(token);
+    } catch (error) {
+      return null;
+    }
   }
-}
 
   getUserRole(): string | null {
     const decoded = this.getDecodedToken();
-    return decoded?.role || null; // Adjust key based on your token payload structure
+    return decoded?.role || null;
   }
 
   hasRole(role: string): boolean {
