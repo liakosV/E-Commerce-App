@@ -5,7 +5,6 @@ import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectNotFoundException;
 import gr.aueb.cf.e_commerce_app.core.exceptions.ValidationException;
 import gr.aueb.cf.e_commerce_app.dto.OrderInsertDto;
 import gr.aueb.cf.e_commerce_app.dto.OrderReadOnlyDto;
-import gr.aueb.cf.e_commerce_app.dto.UserReadOnlyDto;
 import gr.aueb.cf.e_commerce_app.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -21,8 +20,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -54,7 +51,7 @@ public class OrderRestController {
         if (bindingResult.hasErrors()) throw new ValidationException(bindingResult);
 
         OrderReadOnlyDto orderReadOnlyDto = orderService.placeOrder(orderInsertDto);
-        LOGGER.info("Order placed successfully for user {}", orderReadOnlyDto.getUserId());
+        LOGGER.info("Order placed successfully for user {}", orderReadOnlyDto.getUsername());
 
         return new ResponseEntity<>(orderReadOnlyDto, HttpStatus.CREATED);
     }
