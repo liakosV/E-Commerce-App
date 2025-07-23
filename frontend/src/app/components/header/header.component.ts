@@ -3,7 +3,7 @@ import { AuthService } from '../../shared/services/auth.service';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { AuthenticationResponseDto, User } from '../../shared/interfaces/user';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
@@ -23,6 +23,7 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class HeaderComponent implements OnInit, OnDestroy {
   authService = inject(AuthService);
+  router = inject(Router);
 
   isUserLoggedIn = false;
   user: {firstname: string; lastname: string} | null = null;
@@ -50,5 +51,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   logout() {
     this.authService.logout();
     this.dropdownOpen = false;
+    this.router.navigate(['/login']);
+    
   }
 }
