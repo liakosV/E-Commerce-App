@@ -1,6 +1,7 @@
 package gr.aueb.cf.e_commerce_app.rest;
 
 import gr.aueb.cf.e_commerce_app.authentication.AuthenticationService;
+import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectAccessDeniedException;
 import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectNotAuthorizedException;
 import gr.aueb.cf.e_commerce_app.core.exceptions.ValidationException;
 import gr.aueb.cf.e_commerce_app.dto.AuthenticationRequestDto;
@@ -44,9 +45,9 @@ public class AuthRestController {
             }
     )
     @PostMapping("authenticate")
-    public ResponseEntity<AuthenticationResponseDto> authenticate(@RequestBody AuthenticationRequestDto authenticationRequestDto)
-            throws AppObjectNotAuthorizedException {
-
+    public ResponseEntity<AuthenticationResponseDto> authenticate(@Valid @RequestBody AuthenticationRequestDto authenticationRequestDto, BindingResult bindingResult)
+            throws AppObjectNotAuthorizedException, AppObjectAccessDeniedException, ValidationException {
+        if (bindingResult.hasErrors()) throw new ValidationException(bindingResult);
 
         AuthenticationResponseDto authenticationResponseDto = authenticationService.authenticate(authenticationRequestDto);
         LOGGER.info("User authenticated");
