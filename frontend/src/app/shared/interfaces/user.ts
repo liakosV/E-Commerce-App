@@ -32,7 +32,7 @@ export interface UserReadOnlyDto {
   firstname: string;
   lastname: string;
   email: string;
-  roleName: string;
+  role: string;
   userMoreInfo?: UserMoreInfo;
   isActive: boolean;
 }
