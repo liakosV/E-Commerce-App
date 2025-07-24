@@ -15,6 +15,7 @@ import { CommonModule } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { RegionService } from '../../shared/services/region.service';
 import { ActivatedRoute } from '@angular/router';
+import { BackButtonComponent } from "../tools/back-button/back-button.component";
 
 @Component({
   selector: 'app-personal-info',
@@ -26,8 +27,9 @@ import { ActivatedRoute } from '@angular/router';
     MatButtonModule,
     MatCardModule,
     MatFormFieldModule,
-    MatProgressSpinnerModule
-  ],
+    MatProgressSpinnerModule,
+    BackButtonComponent
+],
   templateUrl: './personal-info.component.html',
   styleUrl: './personal-info.component.css'
 })
@@ -83,11 +85,10 @@ export class PersonalInfoComponent implements OnInit {
     const userId = routeUuid ||  this.auth.getUserId();
     if (!userId) return;
 
-    if (!this.form.value.phoneNumber) {
-      this.form.value.phoneNumber = null;
-    }
-
     const payload: UserMoreInfo = this.form.value;
+    if (!payload.phoneNumber) {
+      payload.phoneNumber = null;
+    }
     this.userService.updateUserMoreInfo(userId, payload).subscribe({
       next: () => {
         this.snackbar.open("Peronal infos updated successfully", "Close", {duration: 3000});
