@@ -91,6 +91,13 @@ public class OrderService {
         orderRepository.save(order);
     }
 
+    public void removeOrder(String orderUuid) throws AppObjectNotFoundException {
+        Order order = orderRepository.findByUuid(orderUuid)
+                .orElseThrow(() -> new AppObjectNotFoundException("Order", "The order was not found"));
+
+        orderRepository.delete(order);
+    }
+
     public Page<OrderReadOnlyDto> getPaginatedSortedOrders(int page, int size, String sortBy, String sortDirection) {
         Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
