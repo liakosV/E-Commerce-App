@@ -5,8 +5,7 @@
     <a routerLink="/" class="hover:underline">Home</a>
     <a routerLink="/categories" class="hover:underline">Categories</a>
     <a *ngIf="authService.isLoggedIn()" routerLink="/checkout" class="hover:underline">
-      Cart
-      <!-- <mat-icon>add-cart</mat-icon> -->
+      Checkout
     </a>
 
     <button mat-button [matMenuTriggerFor]="accountMenu" class="text-white">
