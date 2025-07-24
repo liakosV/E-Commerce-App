@@ -1,3 +1,4 @@
+<app-back-button></app-back-button>
 <div class="p-6">
   <h2 class="text-2xl font-semibold mb-4">Products in this Category</h2>
 
@@ -39,7 +40,7 @@
             (click)="togglePopup(product.uuid)"
             matTooltip="Add to Cart"
             [disabled]="product.quantity === 0"
-            *ngIf="!popupOpen[product.uuid]"
+            *ngIf="!popupOpen[product.uuid] && authService.isLoggedIn()"
           >
             <mat-icon>add_shopping_cart</mat-icon>
           </button>
