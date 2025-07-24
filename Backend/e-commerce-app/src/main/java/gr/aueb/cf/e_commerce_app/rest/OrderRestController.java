@@ -69,10 +69,16 @@ public class OrderRestController {
                     @ApiResponse(responseCode = "404", description = "Order not found")
             }
     )
-    @DeleteMapping("/{orderUuid}")
+    @PatchMapping("/{orderUuid}")
     public void deactivateOrder(@PathVariable String orderUuid) throws AppObjectNotFoundException {
         orderService.deactivateOrder(orderUuid);
         LOGGER.info("Order status changed.");
+    }
+
+    @DeleteMapping("/{orderUuid}")
+    public void removeOrder(@PathVariable String orderUuid) throws AppObjectNotFoundException {
+        orderService.removeOrder(orderUuid);
+        LOGGER.info("Order has been removed");
     }
 
     @Operation(
@@ -103,7 +109,7 @@ public class OrderRestController {
     public ResponseEntity<Page<OrderReadOnlyDto>> getPaginatedSortedOrders(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
-            @RequestParam(defaultValue = "isActive") String sortBy,
+            @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "ASC") String sortDirection
     ) {
         Page<OrderReadOnlyDto> orderPage = orderService.getPaginatedSortedOrders(page, size, sortBy, sortDirection);
