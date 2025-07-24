@@ -76,6 +76,24 @@ export class UserSettingsComponent implements OnInit {
     })
   }
 
+  removeUser(user: UserReadOnlyDto) {
+    const confirmed = window.confirm(`Are you sure you want to permanently delete this user: "${user.username}"?`);
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.userService.removeUser(user.uuid).subscribe({
+      next: () => {
+        this.snackbar.open("User removed successfully", "Close", {duration: 3000});
+        this.loadUsers();
+      },
+      error: (err) => {
+        this.snackbar.open("Failed to remove user. Reason: " + err.error.description, "Close", {duration: 5000});
+      }
+    })
+  }
+
   goToPersonalInfo(userId: string) {
     this.router.navigate([`/account/${userId}`]);
   }
