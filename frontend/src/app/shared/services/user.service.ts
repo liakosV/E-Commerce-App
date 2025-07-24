@@ -31,7 +31,11 @@ export class UserService {
   }
 
   deactivateUser(userId: string): Observable<UserReadOnlyDto> {
-    return this.http.delete<UserReadOnlyDto>(`${API_URL}/${userId}`);
+    return this.http.patch<UserReadOnlyDto>(`${API_URL}/${userId}`, {});
+  }
+
+  removeUser(UserUuid: string): Observable<UserReadOnlyDto> {
+    return this.http.delete<UserReadOnlyDto>(`${API_URL}/${UserUuid}`);
   }
 
   updateUserMoreInfo(userId: string, payload: UserMoreInfo): Observable<void> {
