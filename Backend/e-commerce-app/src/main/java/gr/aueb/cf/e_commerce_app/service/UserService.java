@@ -2,7 +2,6 @@ package gr.aueb.cf.e_commerce_app.service;
 
 import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectAccessDeniedException;
 import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectAlreadyExistsException;
-import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectIllegalStateException;
 import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectNotFoundException;
 import gr.aueb.cf.e_commerce_app.dto.UserInsertDto;
 import gr.aueb.cf.e_commerce_app.dto.UserMoreInfoInsertDto;
@@ -71,6 +70,17 @@ public class UserService {
 
         user.setIsActive(!user.getIsActive());
         userRepository.save(user);
+    }
+
+    public void removeUser(String userUuid) throws AppObjectNotFoundException, AppObjectAccessDeniedException {
+        User user = userRepository.findByUuid(userUuid)
+                .orElseThrow(() -> new AppObjectNotFoundException("User", "User not found"));
+
+        if (user.getRole().getName().equals("ADMIN")) {
+            throw new AppObjectAccessDeniedException("auth", "You cannot deactivate users with the ADMIN role");
+        }
+
+        userRepository.delete(user);
     }
 
     @Transactional(rollbackOn = Exception.class)
