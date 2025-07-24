@@ -1,7 +1,7 @@
-<mat-card class="p-6">
-  <!-- Header and Add Product Button -->
-  <div class="flex items-center justify-between mb-4">
-    <h2 class="text-2xl font-semibold">Products</h2>
+<div class="py-6">
+
+
+  <div class="flex items-center justify-between mb-2 mx-4">
     <button
       mat-raised-button
       color="primary"
@@ -11,65 +11,71 @@
       <mat-icon class="mr-1">add</mat-icon>
       Add Product
     </button>
+      <h1 class="text-2xl font-semibold text-gray-800 text-center">Products</h1>
     <button mat-stroked-button color="accent" *ngIf="authService.isLoggedIn()" routerLink="/checkout">
       Go to Checkout
     </button>
   </div>
 
-  <!-- Product Table -->
-  <div class="overflow-auto">
-    <table
-      mat-table
-      [dataSource]="products"
-      matSort
-      (matSortChange)="onSortChange($event)"
-      class="mat-elevation-z2 w-full text-sm"
-    >
-
-      <!-- Name Column -->
-      <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
-        <td mat-cell *matCellDef="let product">{{ product.name }}</td>
-      </ng-container>
-
-      <!-- Price Column -->
-      <ng-container matColumnDef="price">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Price</th>
-        <td mat-cell *matCellDef="let product">{{ product.price | currency: 'EUR' }}</td>
-      </ng-container>
-
-      <!-- Description Column -->
-      <ng-container matColumnDef="description">
-        <th mat-header-cell *matHeaderCellDef>Description</th>
-        <td mat-cell *matCellDef="let product">{{ product.description }}</td>
-      </ng-container>
-
-      <!-- Quantity Column -->
-      <ng-container matColumnDef="quantity">
-        <th mat-header-cell *matHeaderCellDef>Quantity</th>
-        <td mat-cell *matCellDef="let product">{{ product.quantity }}</td>
-      </ng-container>
-
-      <!-- Active Column -->
-      <ng-container matColumnDef="isActive">
-        <th mat-header-cell *matHeaderCellDef>Stock</th>
-        <td mat-cell *matCellDef="let product" class="text-center">
-          <mat-icon
+  <div class="overflow-x-hidden p-4">
+    <table class="min-w-full divide-y divide-gray-900 shadow-sm rounded-lg">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="py-5 px-5 text-center cursor-pointer" (click)="onSortChange({ active: 'name', direction: sortDirection === 'asc' ? 'desc' : 'asc' })">
+            <span>Name</span>
+            <mat-icon 
+              *ngIf="sortBy === 'name'" 
+              class="transition-transform duration-300" 
+              [ngClass]="{
+                'rotate-0': sortDirection === 'asc',
+                'rotate-180': sortDirection === 'desc'
+              }"
+              >
+                arrow_upward
+            </mat-icon>
+          </th>
+          <th 
+            class="py-5 px-5 text-center cursor-pointer" 
+            (click)="onSortChange({ active: 'price', direction: sortDirection === 'asc' ? 'desc' : 'asc'})">
+            Price
+            <mat-icon 
+              *ngIf="sortBy === 'price'" 
+              class="transition-transform duration-300" 
+              [ngClass]="{
+                'rotate-0': sortDirection === 'asc',
+                'rotate-180': sortDirection === 'desc'
+              }"
+              >
+                arrow_upward
+            </mat-icon>
+          </th>
+          <th class="py-5 px-5 text-center">Description</th>
+          <th class="py-5 px-5 text-center">Quantity</th>
+          <th class="py-5 px-5 text-center">Stock</th>
+          <th class=" text-center" *ngIf="authService.isLoggedIn()">Add to Cart</th>
+          <th class=" py-5 text-center" *ngIf="authService.hasRole('ADMIN')">Remove</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-200 text-center">
+        <tr *ngFor="let product of products" class="hover:bg-gray-50 transition">
+          <td class="px-4 py-2 font-medium text-gray-700">{{ product.name }}</td>
+          <td class="px-4 py-2 text-gray-600">{{ product.price | currency }}</td>
+          <td class="px-4 py-2 text-gray-600">{{ product.description }}</td>
+          <td class="px-4 py-2 text-gray-600">{{ product.quantity }}</td>
+          <td class="px-4 py-2">
+            <mat-icon
             [color]="product.isActive ? 'primary' : 'warn'"
             class="text-xl"
           >
             {{ product.isActive ? 'check_circle' : 'cancel' }}
           </mat-icon>
-        </td>
-      </ng-container>
+          </td>
 
-      <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef></th>
-        <td mat-cell *matCellDef="let product">
-          
-          <button
+          <!-- Add to Cart -->
+          <td class="px-4 py-2" *ngIf="authService.isLoggedIn()">
+            <button
             mat-icon-button
-            *ngIf="authService.isLoggedIn() && !popupOpen[product.uuid]"
+            *ngIf="!popupOpen[product.uuid]"
             color="primary"
             (click)="togglePopup(product.uuid)"
             matTooltip="Add to Cart"
@@ -85,11 +91,10 @@
 
             <button
               mat-icon-button
-              color="warn"
               (click)="togglePopup(product.uuid)"
               matTooltip="Cancel"
             >
-              <mat-icon>close</mat-icon>
+              <mat-icon class="pb-2 mb-1">close</mat-icon>
             </button>
 
             <input
@@ -108,30 +113,28 @@
               Confirm
             </button>
           </div>
+          </td>
 
-        </td>
-      </ng-container>
-
-      <!-- Table Rows -->
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+          <!-- Remove Button (ADMIN) -->
+          <td class="px-4 py-2" *ngIf="authService.hasRole('ADMIN')">
+            <button mat-button color="warn" (click)="removeProduct(product)">
+              <mat-icon>delete</mat-icon> Remove
+            </button>
+          </td>
+        </tr>
+      </tbody>
     </table>
   </div>
 
   <!-- Pagination Controls -->
-  <div class="flex items-center justify-between mt-6">
-    <button mat-stroked-button (click)="changePage(page - 1)" [disabled]="page === 0">
-      Previous
-    </button>
-
-    <span class="text-sm text-gray-700">Page {{ page + 1 }} of {{ totalPages }}</span>
-
-    <button
-      mat-stroked-button
-      (click)="changePage(page + 1)"
-      [disabled]="page + 1 >= totalPages"
-    >
-      Next
-    </button>
-  </div>
-</mat-card>
+  <mat-paginator 
+    (page)="changePage($event)"
+    [length]="productPage.totalElements"
+    [pageIndex]="productPage.number"
+    [pageSize]="productPage.size"
+    [pageSizeOptions]="[5, 10, 25, 50]"
+    aria-label="Select page"
+     
+  >
+  </mat-paginator>
+</div>
