@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../shared/services/auth.service';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -24,7 +24,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
-    MatTooltipModule
+    MatTooltipModule,
+    RouterModule
   ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css'
