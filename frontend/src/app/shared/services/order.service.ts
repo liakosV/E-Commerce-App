@@ -29,6 +29,10 @@ export class OrderService {
   }
 
   deactivateOrder(orderUuid: string): Observable<Order> {
-    return this.http.delete<Order>(`${API_URL}/${orderUuid}`)
+    return this.http.patch<Order>(`${API_URL}/${orderUuid}`, {});
+  }
+
+  removeOrder(orderUuid: string): Observable<Order> {
+    return this.http.delete<Order>(`${API_URL}/${orderUuid}`);
   }
 }
