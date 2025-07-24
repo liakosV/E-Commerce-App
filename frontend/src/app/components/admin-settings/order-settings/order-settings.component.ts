@@ -75,6 +75,18 @@ export class OrderSettingsComponent implements OnInit {
     })
   }
 
+  removeOrder(order: Order) {
+    this.orderService.removeOrder(order.uuid).subscribe({
+        next: () => {
+        this.snackbar.open("Order removed ", "Close", {duration: 3000});
+        this.loadOrders();
+      },
+      error: (err) => {
+        this.snackbar.open("Failed to remove order. Reson: " + err.error.description, "Close", {duration: 5000});
+      }
+    })
+  }
+
     changePage(newPage: number) {
       if (newPage >= 0 && newPage < this.totalPages) {
         this.ordersPage.number = newPage;

@@ -10,6 +10,7 @@
           <th class="px-4 py-2">Total Price</th>
           <th class="px-4 py-2">Status</th>
           <th class="px-4 py-2">Actions</th>
+          <th class="px-4 py-2">Remove</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-gray-100">
@@ -29,6 +30,11 @@
           <td class="px-4 py-2">
             <button mat-button color="warn" (click)="deactivateOrder(order)">
               {{ order.isActive ? 'Deactivate' : 'Activate' }}
+            </button>
+          </td>
+          <td class="px-4 py-2">
+            <button (click)="removeOrder(order)" class="cursor-pointer">
+              <mat-icon>delete</mat-icon>
             </button>
           </td>
         </tr>
