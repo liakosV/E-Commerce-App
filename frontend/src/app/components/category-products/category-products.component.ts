@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ProductService } from '../../shared/services/product.service';
 import { Product } from '../../shared/interfaces/product';
 import { CartService } from '../../shared/services/cart.service';
+import { AuthService } from '../../shared/services/auth.service';
 
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
@@ -12,6 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { BackButtonComponent } from '../tools/back-button/back-button.component';
 
 @Component({
   selector: 'app-category-products',
@@ -23,13 +25,15 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     MatCardModule,
     MatIconModule,
     MatButtonModule,
-    MatTooltipModule
+    MatTooltipModule,
+    BackButtonComponent
   ],
   templateUrl: './category-products.component.html',
   styleUrl: './category-products.component.css'
 })
 export class CategoryProductsComponent implements OnInit {
   snackbar = inject(MatSnackBar);
+  authService = inject(AuthService);
   products: Product[] = [];
   categoryId!: number;
   displayedColumns = ['name', 'description', 'price', 'quantity', 'actions'];
