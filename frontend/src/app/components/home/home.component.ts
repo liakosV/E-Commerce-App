@@ -14,6 +14,7 @@ import { MatSort, Sort } from '@angular/material/sort';
 import { RouterModule } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Page } from '../../shared/interfaces/page';
+import {MatPaginatorModule, PageEvent} from '@angular/material/paginator';
 
 
 @Component({
@@ -27,6 +28,7 @@ import { Page } from '../../shared/interfaces/page';
     MatIconModule,
     MatCardModule,
     MatButtonModule,
+    MatPaginatorModule
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
@@ -39,7 +41,15 @@ export class HomeComponent {
   cartService = inject(CartService);
   snackbar = inject(MatSnackBar);
 
-  displayedColumns: string[] = ['name', 'price', 'description', 'quantity', 'isActive', 'actions'];
+  displayedColumns: string[] = [
+    'name', 
+    'price', 
+    'description', 
+    'quantity', 
+    'isActive', 
+    'actions',
+    ...(this.authService.hasRole('ADMIN')? ['remove']: [])
+  ];
   popupOpen: { [productUuid: string]: boolean } = {};
   selectedQuantities: { [productUuid: string]: number } = {};
 
@@ -114,11 +124,22 @@ export class HomeComponent {
       });
   }
 
-  changePage(newPage: number) {
-    if (newPage >= 0 && newPage < this.totalPages) {
-      this.productPage.number = newPage;
-      this.loadProducts();
-    }
+  removeProduct(product: Product) {
+    this.productService.removeProduct(product.uuid).subscribe({
+      next:() => {
+        this.snackbar.open("Product has been removed", "Close", {duration: 3000});
+        this.loadProducts();
+      },
+      error: (err) => {
+        this.snackbar.open("Failed to remove a product", "Close", {duration: 5000});
+      }
+    })
+  }
+
+  changePage(event: PageEvent) {
+    this.productPage.number = event.pageIndex;
+    this.productPage.size = event.pageSize
+    this.loadProducts();
   }
 
   onSortChange(sort: Sort) {
