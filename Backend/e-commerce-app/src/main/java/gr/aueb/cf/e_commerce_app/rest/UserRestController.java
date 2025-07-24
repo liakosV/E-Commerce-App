@@ -103,10 +103,23 @@ public class UserRestController {
                     @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
             }
     )
-    @DeleteMapping("/{userUuid}")
+    @PatchMapping("/{userUuid}")
     public void deactivateUser(@PathVariable String userUuid) throws AppObjectNotFoundException, AppObjectAccessDeniedException {
         userService.deactivateUser(userUuid);
         LOGGER.info("User status changed");
+    }
+
+    @Operation(
+            summary = "Deletes a user",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "User removed", content = @Content),
+                    @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
+            }
+    )
+    @DeleteMapping("/{userUuid}")
+    public void removeUser(@PathVariable String userUuid) throws AppObjectNotFoundException, AppObjectAccessDeniedException {
+        userService.removeUser(userUuid);
+        LOGGER.info("User has been removed");
     }
 
     @Operation(
