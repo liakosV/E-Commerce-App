@@ -12,6 +12,7 @@ import { CategoryService } from '../../shared/services/category.service';
 import { ProductInsertDto } from '../../shared/interfaces/product';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { BackButtonComponent } from "../tools/back-button/back-button.component";
 
 @Component({
   selector: 'app-add-product',
@@ -22,8 +23,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    MatButtonModule
-  ],
+    MatButtonModule,
+    BackButtonComponent
+],
   templateUrl: './add-product.component.html',
   styleUrl: './add-product.component.css'
 })
