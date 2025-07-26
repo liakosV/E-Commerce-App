@@ -12,7 +12,7 @@ public class UserMoreInfoReadOnlyDto {
 
     private String phoneNumber;
     private Gender gender;
-    private String regionName;
+    private RegionReadOnlyDto region;
     private String address;
     private String addressNumber;
 }
