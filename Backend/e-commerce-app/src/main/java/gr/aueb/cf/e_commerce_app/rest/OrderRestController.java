@@ -75,6 +75,19 @@ public class OrderRestController {
         LOGGER.info("Order status changed.");
     }
 
+    @Operation(
+            summary = "Removes an order",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Order removed",
+                            content = @Content(
+                                    mediaType = "application/json"
+                            )
+                    ),
+                    @ApiResponse(responseCode = "404", description = "Order not found")
+            }
+    )
     @DeleteMapping("/{orderUuid}")
     public void removeOrder(@PathVariable String orderUuid) throws AppObjectNotFoundException {
         orderService.removeOrder(orderUuid);
