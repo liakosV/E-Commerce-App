@@ -1,0 +1,41 @@
+<div class="max-w-md mx-auto p-6 bg-white shadow-md rounded-lg my-10">
+  <h1 class="text-3xl font-bold text-center mb-6">Contact Us</h1>
+
+  <form (ngSubmit)="onSubmit()" [formGroup]="contactForm" class="space-y-5">
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="name" required />
+      <mat-error *ngIf="contactForm.get('name')?.hasError('required')">Name is required</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email" required email />
+      <mat-error *ngIf="contactForm.get('email')?.hasError('required')">Email is required</mat-error>
+      <mat-error *ngIf="contactForm.get('email')?.hasError('email')">Please enter a valid email</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Subject</mat-label>
+      <input matInput formControlName="subject" required />
+      <mat-error *ngIf="contactForm.get('subject')?.hasError('required')">Subject is required</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Message</mat-label>
+      <textarea matInput formControlName="message" rows="5" required></textarea>
+      <mat-error *ngIf="contactForm.get('message')?.hasError('required')">Message is required</mat-error>
+    </mat-form-field>
+
+    <button 
+      mat-raised-button 
+      color="primary" 
+      type="submit" 
+      [disabled]="contactForm.invalid"
+      class="w-full py-3 font-semibold"
+    >
+      Send Message
+    </button>
+  </form>
+</div>
+
