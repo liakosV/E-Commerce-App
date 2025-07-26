@@ -1,0 +1,127 @@
+<div class="p-4 space-y-6">
+  <!-- Filter Form -->
+  <form [formGroup]="filterForm" (ngSubmit)="onSubmit()" class="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
+    <mat-form-field appearance="fill" class="col-span-2">
+      <mat-label>Category</mat-label>
+      <mat-select formControlName="category">
+        <mat-option [value]="null">All Categories</mat-option>
+        <mat-option *ngFor="let category of categories" [value]="category">
+          {{category.name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Min Price</mat-label>
+      <input matInput type="number" formControlName="minPrice" min="0" />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Max Price</mat-label>
+      <input matInput type="number" formControlName="maxPrice" min="0" />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="col-span-2">
+      <mat-label>Search</mat-label>
+      <input matInput formControlName="search" placeholder="Product name" />
+    </mat-form-field>
+
+    <!-- <mat-checkbox formControlName="isActive">In Stock Only</mat-checkbox> -->
+    <mat-radio-group formControlName="isActive" >
+      <mat-radio-button [value]="true">In Stock</mat-radio-button>
+      <mat-radio-button [value]="false"> Out of Stock</mat-radio-button>
+      <mat-radio-button [value]="undefined">All Products</mat-radio-button>
+    </mat-radio-group>
+
+
+    <div class="flex gap-3 w-90 h-[56px]">
+      <button mat-raised-button color="primary" type="submit">Apply Filters</button>
+      <button mat-raised-button color="warn" type="button" (click)="clearFilters()" >Clear Filters</button>
+    </div>
+    
+  </form>
+
+  <!-- Sort Button -->
+  <div class="flex items-center gap-2">
+    <span class="text-lg font-semibold">Sort by:</span>
+    <button
+      mat-stroked-button
+      (click)="onSortChange({ active: 'name', direction: sortDirection === 'asc' ? 'desc' : 'asc' })"
+    >
+      Name
+      <mat-icon class="ml-1" *ngIf="sortBy === 'name'">
+        {{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
+      </mat-icon>
+    </button>
+    <button
+      mat-stroked-button
+      (click)="onSortChange({ active: 'price', direction: sortDirection === 'asc' ? 'desc' : 'asc' })"
+    >
+      Price
+      <mat-icon class="ml-1" *ngIf="sortBy === 'price'">
+        {{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
+      </mat-icon>
+    </button>
+  </div>
+
+  <!-- Product Grid -->
+  <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <div *ngFor="let product of products" class="rounded-2xl shadow-md p-4 border bg-white relative">
+      <h2 class="text-xl font-bold">{{ product.name }}</h2>
+      <p class="text-gray-600 mb-1">Category: {{ product.category.name }}</p>
+      <p class="text-gray-600 mb-1">{{product.description}}</p>
+      <p class="text-gray-700 font-medium">Price: {{ product.price | currency: 'EUR'}} </p>
+      <p class="text-sm text-gray-500">Stock: {{ product.quantity }}</p>
+
+      <!-- Admin Remove Button -->
+      <button
+        *ngIf="authService.hasRole('ADMIN') || authService.hasRole('SELLER')"
+        mat-icon-button
+        color="warn"
+        (click)="removeProduct(product)"
+        class="absolute top-2 right-2"
+        matTooltip="Remove Product"
+      >
+        <mat-icon>delete</mat-icon>
+      </button>
+
+      <!-- Add to Cart Popup -->
+      <div class="mt-4" *ngIf="authService.isLoggedIn()">
+        <button mat-stroked-button color="primary" (click)="togglePopup(product.uuid)" [disabled]="product.quantity <= 0">
+          Add to Cart
+        </button>
+
+        <div *ngIf="popupOpen[product.uuid]" class="mt-2 space-y-2">
+          <input
+            type="number"
+            min="1"
+            [max]="product.quantity"
+            [(ngModel)]="selectedQuantities[product.uuid]"
+            class="border rounded px-2 py-1 w-full"
+            placeholder="Quantity"
+          />
+
+          <button
+            mat-raised-button
+            color="accent"
+            class="w-full"
+            (click)="addToCart(product)"
+          >
+            Confirm Add
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Paginator -->
+  <mat-paginator
+    [length]="productPage.totalElements || 0"
+    [pageSize]="size"
+    [pageSizeOptions]="[5, 10, 20]"
+    (page)="onPageChange($event)"
+    [pageIndex]="page"
+    showFirstLastButtons
+    class="mt-6"
+  ></mat-paginator>
+</div>
