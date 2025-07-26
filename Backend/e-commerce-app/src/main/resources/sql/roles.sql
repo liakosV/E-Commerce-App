@@ -1,6 +1,5 @@
-INSERT INTO roles (name, description) VALUES
-                        ('ADMIN', 'Administrator with full access to manage the platform'),
-                        ('CUSTOMER', 'Registered user who can browse and purchase products'),
-                        ('SELLER', 'Vendor with access to manage product listings and orders'),
-                        ('GUEST', 'Unauthenticated user with read-only access');
-ALTER TABLE roles AUTO_INCREMENT = 5;
+INSERT INTO roles (id, name, description) VALUES
+                        (1, 'ADMIN', 'Administrator with full access to manage the platform'),
+                        (2, 'CUSTOMER', 'Registered user who can browse and purchase products'),
+                        (3, 'SELLER', 'Vendor with access to manage product listings and orders');
+ALTER TABLE roles AUTO_INCREMENT = 4;
