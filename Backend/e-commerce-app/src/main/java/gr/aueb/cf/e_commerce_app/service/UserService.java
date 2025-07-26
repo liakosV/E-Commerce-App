@@ -65,7 +65,7 @@ public class UserService {
                 .orElseThrow(() -> new AppObjectNotFoundException("User", "User not found"));
 
         if (user.getRole().getName().equals("ADMIN")) {
-            throw new AppObjectAccessDeniedException("auth", "You cannot deactivate users with the ADMIN role");
+            throw new AppObjectAccessDeniedException("auth", "You cannot deactivate users with the role ADMIN.");
         }
 
         user.setIsActive(!user.getIsActive());
@@ -77,7 +77,7 @@ public class UserService {
                 .orElseThrow(() -> new AppObjectNotFoundException("User", "User not found"));
 
         if (user.getRole().getName().equals("ADMIN")) {
-            throw new AppObjectAccessDeniedException("auth", "You cannot deactivate users with the ADMIN role");
+            throw new AppObjectAccessDeniedException("auth", "You cannot remove users with the role ADMIN.");
         }
 
         userRepository.delete(user);
@@ -100,22 +100,29 @@ public class UserService {
 
         boolean isAdmin = currentUser.getRole().getName().equals("ADMIN");
         boolean isOwner = currentUser.getId().equals(user.getId());
+        UserMoreInfo info = user.getUserMoreInfo();
 
         if (!isAdmin && !isOwner) {
             throw new AppObjectAccessDeniedException("UserMoreInfo", "You are not authenticated to update this user's information");
         }
 
         // Check if phone number is used by someone else
-        Optional<UserMoreInfo> existing = userMoreInfoRepository.findByPhoneNumber(insertDto.getPhoneNumber());
+        if (insertDto.getPhoneNumber() != null && !insertDto.getPhoneNumber().trim().isEmpty()) {
+            Optional<UserMoreInfo> existing = userMoreInfoRepository.findByPhoneNumber(insertDto.getPhoneNumber().trim());
 
-        if (existing.isPresent()) {
-            User existingUser = existing.get().getUser();
-            if (existingUser != null && !existingUser.getId().equals(user.getId())) {
-                throw new AppObjectAlreadyExistsException("UserMoreInfo", "Phone number already used by another user");
+            if (existing.isPresent()) {
+                User existingUser = existing.get().getUser();
+                if (existingUser != null && !existingUser.getId().equals(user.getId())) {
+                    throw new AppObjectAlreadyExistsException("UserMoreInfo", "Phone number already used by another user");
+                }
             }
+
+            info.setPhoneNumber(insertDto.getPhoneNumber().trim());
+        } else {
+            info.setPhoneNumber(null);
         }
 
-        UserMoreInfo info = user.getUserMoreInfo();
+
         if (info == null) {
             info = new UserMoreInfo();
         }
