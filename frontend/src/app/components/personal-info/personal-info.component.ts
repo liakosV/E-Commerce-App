@@ -42,19 +42,23 @@ export class PersonalInfoComponent implements OnInit {
   route = inject(ActivatedRoute);
 
   regions: Region[] = [];
+  filterForm!: FormGroup;
 
-  form = this.fb.group({
 
-    gender: [''],
-    regionId: [null as number | null],
-    address: [''],
-    addressNumber: [''],
-    phoneNumber: ['', [Validators.minLength(10)]],
-  });
   
   ngOnInit(): void {
-    this.loadRegions();
-    this.loadPersonalInfo(); 
+    this.filterForm = this.fb.group({
+      gender: [''],
+      regionId: [null as number | null],
+      address: [''],
+      addressNumber: [''],
+      phoneNumber: ['', [Validators.minLength(10)]],
+    });
+
+    this.loadRegions(); 
+    this.loadPersonalInfo();
+
+    
   }
 
   loadPersonalInfo() {
@@ -63,7 +67,10 @@ export class PersonalInfoComponent implements OnInit {
     if (userId) {
       this.userService.getUserByUuid(userId).subscribe(user => {
         if (user.userMoreInfo) {
-          this.form.patchValue(user.userMoreInfo);
+          this.filterForm.patchValue({
+            ...user.userMoreInfo,
+            regionId: user.userMoreInfo.region?.id|| null
+          });
         }
       });
     }
@@ -85,10 +92,11 @@ export class PersonalInfoComponent implements OnInit {
     const userId = routeUuid ||  this.auth.getUserId();
     if (!userId) return;
 
-    const payload: UserMoreInfo = this.form.value;
-    if (!payload.phoneNumber) {
-      payload.phoneNumber = null;
+    const payload: UserMoreInfo = {
+      ...this.filterForm.value,
+      phoneNumber: this.cleanPhone(this.filterForm.value.phoneNumber)
     }
+
     this.userService.updateUserMoreInfo(userId, payload).subscribe({
       next: () => {
         this.snackbar.open("Peronal infos updated successfully", "Close", {duration: 3000});
@@ -104,5 +112,11 @@ export class PersonalInfoComponent implements OnInit {
         }
       }
     });
+  }
+
+  private cleanPhone(phone: string | null | undefined): string | null {
+    if (!phone) return null;
+    const cleaned = phone.trim();
+    return cleaned === '' ? null : cleaned;
   }
 }

@@ -1,5 +1,5 @@
 <app-back-button class="absolute"></app-back-button>
-<form [formGroup]="form" (ngSubmit)="onSubmit()" class="max-w-md mx-auto p-6 bg-gray-50 rounded-lg shadow-md flex flex-col space-y-5 my-5">
+<form [formGroup]="filterForm" (ngSubmit)="onSubmit()" class="max-w-md mx-auto p-6 bg-gray-50 rounded-lg shadow-md flex flex-col space-y-5 my-5">
   <span class="text-center font-bold text-2xl">Personal Info</span>
 
   <hr>
@@ -40,7 +40,7 @@
     mat-raised-button 
     color="primary" 
     type="submit" 
-    [disabled]="form.invalid"
+    [disabled]="filterForm.invalid"
     class="self-end px-5 py-2 font-semibold uppercase bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed"
   >
     Save
