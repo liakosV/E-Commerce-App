@@ -2,6 +2,8 @@ package gr.aueb.cf.e_commerce_app.service;
 
 import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectAlreadyExistsException;
 import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectNotFoundException;
+import gr.aueb.cf.e_commerce_app.core.filters.ProductFilters;
+import gr.aueb.cf.e_commerce_app.core.specifications.ProductSpecification;
 import gr.aueb.cf.e_commerce_app.dto.ProductInsertDto;
 import gr.aueb.cf.e_commerce_app.dto.ProductReadOnlyDto;
 import gr.aueb.cf.e_commerce_app.mapper.Mapper;
@@ -15,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -43,13 +46,6 @@ public class ProductService {
         return mapper.mapToProductReadOnlyDto(newProduct);
     }
 
-    public Page<ProductReadOnlyDto> getPaginatedSortedProducts(int page, int size, String sortBy, String sortDirection) {
-        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortBy);
-        Pageable pageable = PageRequest.of(page, size, sort);
-
-        return  productRepository.findAll(pageable).map(mapper::mapToProductReadOnlyDto);
-    }
-
     public void removeProduct(String productUuid) throws AppObjectNotFoundException {
         Product product = productRepository.findByUuid(productUuid)
                 .orElseThrow(() -> new AppObjectNotFoundException("Product", "The product was not found"));
@@ -57,10 +53,18 @@ public class ProductService {
         productRepository.delete(product);
     }
 
-    public List<ProductReadOnlyDto> getAllProductsUnpaged() {
+    @Transactional
+    public Page<ProductReadOnlyDto> getFilteredPaginatedProducts(ProductFilters filters, Pageable pageable) {
+        return productRepository.findAll(getSpecsFromFilter(filters), pageable)
+                .map(mapper::mapToProductReadOnlyDto);
+    }
 
-        return productRepository.findAll().stream()
-                .map(mapper::mapToProductReadOnlyDto)
-                .toList();
+    private Specification<Product> getSpecsFromFilter(ProductFilters filters) {
+        return Specification
+                .where(ProductSpecification.hasCategory(filters.getCategory()))
+                .and(ProductSpecification.hasMinPrice(filters.getMinPrice()))
+                .and(ProductSpecification.hasMaxPrice(filters.getMaxPrice()))
+                .and(ProductSpecification.isActive(filters.getIsActive()))
+                .and(ProductSpecification.hasSearch(filters.getSearch()));
     }
 }
