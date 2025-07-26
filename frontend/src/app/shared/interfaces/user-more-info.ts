@@ -1,6 +1,8 @@
+import { Region } from "./region";
+
 export interface UserMoreInfo {
   gender?: string | null;
-  regionId?: number | null;
+  region?: Region | null;
   address?: string | null;
   addressNumber?: string | null;
   phoneNumber?: string | null;
