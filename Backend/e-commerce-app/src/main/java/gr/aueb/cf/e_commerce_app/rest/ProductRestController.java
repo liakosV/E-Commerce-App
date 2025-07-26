@@ -3,6 +3,7 @@ package gr.aueb.cf.e_commerce_app.rest;
 import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectAlreadyExistsException;
 import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectNotFoundException;
 import gr.aueb.cf.e_commerce_app.core.exceptions.ValidationException;
+import gr.aueb.cf.e_commerce_app.core.filters.ProductFilters;
 import gr.aueb.cf.e_commerce_app.dto.ProductInsertDto;
 import gr.aueb.cf.e_commerce_app.dto.ProductReadOnlyDto;
 import gr.aueb.cf.e_commerce_app.service.ProductService;
@@ -14,7 +15,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -75,7 +78,7 @@ public class ProductRestController {
     }
 
     @Operation(
-            summary = "Get all products sorted and paginated",
+            summary = "Get all products filtered and paginated",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
@@ -88,22 +91,10 @@ public class ProductRestController {
             }
     )
     @GetMapping
-    public ResponseEntity<Page<ProductReadOnlyDto>> getPaginatedSortedProducts(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "name") String sortBy,
-            @RequestParam(defaultValue = "ASC") String sortDirection
-    ) {
-
-        Page<ProductReadOnlyDto> productPage = productService.getPaginatedSortedProducts(page, size, sortBy, sortDirection);
-
-        return new ResponseEntity<>(productPage, HttpStatus.OK);
-    }
-
-    @GetMapping("/all")
-    public ResponseEntity<List<ProductReadOnlyDto>> getAllProductsUnpaged() {
-        List<ProductReadOnlyDto> productsList = productService.getAllProductsUnpaged();
-
-        return new ResponseEntity<>(productsList, HttpStatus.OK);
+    public ResponseEntity<Page<ProductReadOnlyDto>> getProductsFilteredPaginated(
+            @ParameterObject ProductFilters filters,
+            @ParameterObject Pageable pageable) {
+        Page<ProductReadOnlyDto> page = productService.getFilteredPaginatedProducts(filters, pageable);
+        return new ResponseEntity<>(page, HttpStatus.OK);
     }
 }
