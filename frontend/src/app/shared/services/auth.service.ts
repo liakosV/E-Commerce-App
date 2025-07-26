@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment.development';
 import { AuthenticationResponseDto, Credentials, User } from '../interfaces/user';
 import { jwtDecode } from 'jwt-decode';
+import { CartService } from './cart.service';
 
 const API_URL_AUTH = `${environment.apiURL}/api/auth/authenticate`
 const API_URL = `${environment.apiURL}/api/users`
@@ -12,6 +13,7 @@ const API_URL = `${environment.apiURL}/api/users`
 })
 export class AuthService {
   http: HttpClient = inject(HttpClient);
+  cartService = inject(CartService);
 
   private isLoggedInSubject = new BehaviorSubject<boolean>(this.hasToken());
   isLoggedIn$ = this.isLoggedInSubject.asObservable();
@@ -43,6 +45,7 @@ login(credentials: Credentials): Observable<any> {
     localStorage.removeItem('firstname');
     localStorage.removeItem('lastname');
     this.isLoggedInSubject.next(false);
+    this.cartService.clearCart();
   }
 
   register(user: User) {
