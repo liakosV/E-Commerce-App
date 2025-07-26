@@ -1,7 +1,6 @@
 package gr.aueb.cf.e_commerce_app.dto;
 
 import gr.aueb.cf.e_commerce_app.core.enums.Gender;
-import gr.aueb.cf.e_commerce_app.model.static_data.Region;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
