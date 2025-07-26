@@ -34,5 +34,40 @@ INSERT INTO products (id, name, description, category_id, price, quantity, is_ac
                 (25, 'Western Digital Black SN850X 1TB', 'PCIe Gen4 NVMe, Up to 7300MB/s', 9, 129.99, 35, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, UUID()),
 
                 (26, 'DJI Mini 4 Pro', 'Lightweight Drone, 4K Camera, Obstacle Avoidance, 34min Flight', 10, 759.00, 12, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, UUID()),
-                (27, 'DJI Avata 2', 'FPV Drone, 4K Stabilized Video, Motion Controller', 10, 999.00, 10, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, UUID());
-ALTER TABLE products AUTO_INCREMENT = 28;
+                (27, 'DJI Avata 2', 'FPV Drone, 4K Stabilized Video, Motion Controller', 10, 999.00, 10, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, UUID()),
+                (28, 'Dell XPS 13', '13.4" UHD+ Touch, Intel i7, 16GB RAM, 512GB SSD', 1, 1299.99, 20, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, UUID()),
+                (29, 'Acer Swift 3', '14" FHD, AMD Ryzen 5, 8GB RAM, 512GB SSD', 1, 699.99, 35, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, UUID()),
+
+                (30, 'Google Pixel 8', '6.2" OLED, 128GB, Tensor G3, Android 14', 2, 799.99, 40, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, UUID()),
+                (31, 'OnePlus 12', '6.8" AMOLED, 256GB, Snapdragon 8 Gen 3', 2, 849.99, 30, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, UUID()),
+
+                (32, 'Amazon Fire HD 10', '10.1" FHD, 64GB, Android-based Fire OS', 3, 149.99, 50, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, UUID()),
+                (33, 'Microsoft Surface Pro 9', '13" Touch, i5, 8GB, 256GB SSD, Windows 11', 3, 1099.99, 20, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, UUID()),
+
+                (34, 'Garmin Venu 3', 'AMOLED, GPS, Fitness & Sleep Tracking', 4, 449.99, 25, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, UUID()),
+                (35, 'Amazfit GTR 4', '1.43" AMOLED, GPS, Health Monitoring', 4, 199.99, 40, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, UUID()),
+
+                (36, 'Sennheiser Momentum 4', 'Wireless Over-Ear Headphones, ANC', 5, 379.99, 15, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, UUID()),
+                (37, 'JBL Tune 760NC', 'Over-Ear, Noise-Canceling, Bluetooth', 5, 129.99, 50, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, UUID()),
+
+                (38, 'Kingston USB-C Docking Station', 'Dual Monitor, Gigabit Ethernet, SD Reader', 6, 89.99, 30, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, UUID()),
+                (39, 'Razer Basilisk V3', 'Wired Gaming Mouse, RGB, 26K DPI', 6, 69.99, 45, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, UUID()),
+
+                (40, 'Corsair K95 RGB Platinum XT', 'Mechanical Keyboard, Cherry MX Blue', 7, 199.99, 25, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, UUID()),
+                (41, 'Blue Yeti X Microphone', 'USB, Cardioid, Omnidirectional, Streaming Mic', 7, 169.99, 30, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, UUID()),
+
+                (42, 'ASUS RT-AX88U', 'Dual-Band WiFi 6 Router, 6000 Mbps, AiMesh', 8, 299.99, 20, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, UUID()),
+                (43, 'Google Nest WiFi Pro', 'Wi-Fi 6E Mesh Router, 2-Pack', 8, 329.99, 15, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, UUID()),
+
+                (44, 'Crucial X9 Pro 1TB', 'Portable SSD, USB-C, Up to 1050MB/s', 9, 119.99, 40, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, UUID()),
+                (45, 'Samsung 990 Pro 2TB', 'PCIe 4.0 NVMe, Up to 7450MB/s', 9, 239.99, 20, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, UUID()),
+
+                (46, 'Autel EVO Nano+', '4K RYYB Sensor, Obstacle Avoidance, 28min Flight', 10, 799.00, 12, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, UUID()),
+                (47, 'Ryze Tello', 'Mini Drone with 720p Camera and DJI Tech', 10, 99.99, 40, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, UUID()),
+
+                (48, 'Dell Inspiron 15', '15.6" FHD, Intel i5, 8GB RAM, 512GB SSD', 1, 649.99, 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, UUID()),
+                (49, 'Google Pixel Tablet', '11" Display, Tensor G2, 128GB, Android 14', 3, 499.99, 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, UUID()),
+                (50, 'Beats Studio Pro', 'Wireless Noise-Canceling Headphones, Spatial Audio', 5, 349.99, 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, UUID()),
+                (51, 'TP-Link Deco XE75 Pro', 'Wi-Fi 6E Mesh System, Tri-Band, 3-Pack', 8, 399.99, 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, UUID()),
+                (52, 'DJI Air 3 Fly More Combo', 'Dual Camera Drone, 46min Flight, 4K HDR', 10, 1099.00, 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, UUID());
+ALTER TABLE products AUTO_INCREMENT = 53;
