@@ -7,7 +7,7 @@
     <tr *ngFor="let item of items">
       <td>{{ item.name }}</td>
       <td>Qty: {{ item.quantity }}</td>
-      <td>{{ item.price | currency }}</td>
+      <td>{{ item.price | currency: 'EUR' }}</td>
       <td>
         <button mat-icon-button color="warn" (click)="removeItem(item.productUuid)">
           <mat-icon>delete</mat-icon>
