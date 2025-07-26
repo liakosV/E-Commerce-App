@@ -2,6 +2,7 @@ package gr.aueb.cf.e_commerce_app.service;
 
 import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectAlreadyExistsException;
 import gr.aueb.cf.e_commerce_app.core.exceptions.AppObjectNotFoundException;
+import gr.aueb.cf.e_commerce_app.core.filters.ProductFilters;
 import gr.aueb.cf.e_commerce_app.dto.ProductInsertDto;
 import gr.aueb.cf.e_commerce_app.dto.ProductReadOnlyDto;
 import gr.aueb.cf.e_commerce_app.mapper.Mapper;
@@ -11,117 +12,125 @@ import gr.aueb.cf.e_commerce_app.repository.CategoryRepository;
 import gr.aueb.cf.e_commerce_app.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.mockito.*;
+import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 
-import java.util.List;
-import java.util.Optional;
+import java.math.BigDecimal;
+import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
-
-    @Mock private ProductRepository productRepository;
-    @Mock private CategoryRepository categoryRepository;
-    @Mock private Mapper mapper;
 
     @InjectMocks
     private ProductService productService;
 
-    private ProductInsertDto insertDto;
-    private Product product;
-    private ProductReadOnlyDto readDto;
-    private Category category;
+    @Mock
+    private ProductRepository productRepository;
+
+    @Mock
+    private CategoryRepository categoryRepository;
+
+    @Mock
+    private Mapper mapper;
 
     @BeforeEach
     void setUp() {
-        insertDto = new ProductInsertDto();
-        insertDto.setName("Test Product");
-        insertDto.setCategoryId(1L);
-
-        category = new Category();
-        category.setId(1L);
-        category.setName("Electronics");
-
-        product = new Product();
-        product.setId(1L);
-        product.setName("Test Product");
-        product.setCategory(category);
-
-        readDto = new ProductReadOnlyDto();
-        readDto.setName("Test Product");
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    void shouldSaveProduct_WhenValid() throws Exception {
-        when(productRepository.findByName("Test Product")).thenReturn(Optional.empty());
-        when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
+    void saveProduct_success() throws Exception {
+        ProductInsertDto insertDto = new ProductInsertDto();
+        insertDto.setName("New Product");
+        insertDto.setCategoryId(1L);
+
+        Category category = new Category();
+        category.setId(1L);
+
+        Product product = new Product();
+        Product savedProduct = new Product();
+        savedProduct.setId(1L);
+        savedProduct.setName("New Product");
+
+        ProductReadOnlyDto readOnlyDto = new ProductReadOnlyDto();
+        readOnlyDto.setName("New Product");
+
+        when(productRepository.findByName(insertDto.getName())).thenReturn(Optional.empty());
+        when(categoryRepository.findById(insertDto.getCategoryId())).thenReturn(Optional.of(category));
         when(mapper.mapToProductEntity(insertDto)).thenReturn(product);
-        when(productRepository.save(product)).thenReturn(product);
-        when(mapper.mapToProductReadOnlyDto(product)).thenReturn(readDto);
+        when(productRepository.save(product)).thenReturn(savedProduct);
+        when(mapper.mapToProductReadOnlyDto(savedProduct)).thenReturn(readOnlyDto);
 
         ProductReadOnlyDto result = productService.saveProduct(insertDto);
 
-        assertEquals("Test Product", result.getName());
+        assertEquals("New Product", result.getName());
+        verify(productRepository).save(product);
     }
 
     @Test
-    void shouldThrow_WhenProductAlreadyExists() {
-        when(productRepository.findByName("Test Product")).thenReturn(Optional.of(product));
+    void saveProduct_shouldThrowAlreadyExists() {
+        ProductInsertDto insertDto = new ProductInsertDto();
+        insertDto.setName("Existing Product");
 
-        assertThrows(AppObjectAlreadyExistsException.class, () -> productService.saveProduct(insertDto));
+        when(productRepository.findByName(insertDto.getName()))
+                .thenReturn(Optional.of(new Product()));
+
+        assertThrows(AppObjectAlreadyExistsException.class,
+                () -> productService.saveProduct(insertDto));
     }
 
     @Test
-    void shouldThrow_WhenCategoryNotFound() {
-        when(productRepository.findByName("Test Product")).thenReturn(Optional.empty());
+    void saveProduct_shouldThrowCategoryNotFound() {
+        ProductInsertDto insertDto = new ProductInsertDto();
+        insertDto.setName("Product");
+        insertDto.setCategoryId(1L);
+
+        when(productRepository.findByName(insertDto.getName())).thenReturn(Optional.empty());
         when(categoryRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(AppObjectNotFoundException.class, () -> productService.saveProduct(insertDto));
+        assertThrows(AppObjectNotFoundException.class,
+                () -> productService.saveProduct(insertDto));
     }
 
     @Test
-    void shouldReturnPaginatedSortedProducts() {
-        Product product2 = new Product();
-        product2.setName("Another");
+    void removeProduct_success() throws Exception {
+        Product product = new Product();
+        when(productRepository.findByUuid("uuid")).thenReturn(Optional.of(product));
 
-        ProductReadOnlyDto dto2 = new ProductReadOnlyDto();
-        dto2.setName("Another");
-
-        Page<Product> page = new PageImpl<>(List.of(product, product2));
-
-        when(productRepository.findAll(any(Pageable.class))).thenReturn(page);
-        when(mapper.mapToProductReadOnlyDto(product)).thenReturn(readDto);
-        when(mapper.mapToProductReadOnlyDto(product2)).thenReturn(dto2);
-
-        Page<ProductReadOnlyDto> result = productService.getPaginatedSortedProducts(0, 10, "name", "ASC");
-
-        assertEquals(2, result.getTotalElements());
-    }
-
-    @Test
-    void shouldDeleteProduct_WhenExists() throws Exception {
-        when(productRepository.findByUuid("abc-123")).thenReturn(Optional.of(product));
-
-        productService.removeProduct("abc-123");
+        productService.removeProduct("uuid");
 
         verify(productRepository).delete(product);
     }
 
     @Test
-    void shouldThrow_WhenProductToDeleteNotFound() {
-        when(productRepository.findByUuid("abc-123")).thenReturn(Optional.empty());
+    void removeProduct_shouldThrowNotFound() {
+        when(productRepository.findByUuid("uuid")).thenReturn(Optional.empty());
 
-        assertThrows(AppObjectNotFoundException.class, () -> productService.removeProduct("abc-123"));
+        assertThrows(AppObjectNotFoundException.class,
+                () -> productService.removeProduct("uuid"));
+    }
+
+    @Test
+    void getFilteredPaginatedProducts_returnsPage() {
+        ProductFilters filters = new ProductFilters(); // all null = no filters
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("name").ascending());
+
+        Product product = new Product();
+        product.setName("Sample");
+
+        ProductReadOnlyDto dto = new ProductReadOnlyDto();
+        dto.setName("Sample");
+
+        Page<Product> page = new PageImpl<>(List.of(product));
+        when(productRepository.findAll((Specification<Product>) any(), eq(pageable))).thenReturn(page);
+        when(mapper.mapToProductReadOnlyDto(product)).thenReturn(dto);
+
+        Page<ProductReadOnlyDto> result = productService.getFilteredPaginatedProducts(filters, pageable);
+
+        assertEquals(1, result.getTotalElements());
+        assertEquals("Sample", result.getContent().get(0).getName());
     }
 }
