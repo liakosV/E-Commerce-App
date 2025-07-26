@@ -6,36 +6,23 @@ import gr.aueb.cf.e_commerce_app.dto.OrderInsertDto;
 import gr.aueb.cf.e_commerce_app.dto.OrderItemInsertDto;
 import gr.aueb.cf.e_commerce_app.dto.OrderReadOnlyDto;
 import gr.aueb.cf.e_commerce_app.mapper.Mapper;
-import gr.aueb.cf.e_commerce_app.model.Order;
-import gr.aueb.cf.e_commerce_app.model.OrderItem;
-import gr.aueb.cf.e_commerce_app.model.Product;
-import gr.aueb.cf.e_commerce_app.model.User;
-import gr.aueb.cf.e_commerce_app.repository.OrderRepository;
-import gr.aueb.cf.e_commerce_app.repository.ProductRepository;
-import gr.aueb.cf.e_commerce_app.repository.UserRepository;
+import gr.aueb.cf.e_commerce_app.model.*;
+import gr.aueb.cf.e_commerce_app.repository.*;
+import gr.aueb.cf.e_commerce_app.service.OrderService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.mockito.*;
+import org.springframework.data.domain.*;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.*;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
 
     @Mock private OrderRepository orderRepository;
@@ -43,149 +30,204 @@ class OrderServiceTest {
     @Mock private ProductRepository productRepository;
     @Mock private Mapper mapper;
 
-    @InjectMocks
-    private OrderService orderService;
+    @InjectMocks private OrderService orderService;
 
-    private User user;
-    private Product product;
-    private Order order;
-    private OrderItem orderItem;
-    private OrderInsertDto orderInsertDto;
-    private OrderItemInsertDto orderItemInsertDto;
-    private OrderReadOnlyDto readDto;
+    private User mockUser;
+    private Product mockProduct;
+    private String productUuid;
 
     @BeforeEach
     void setUp() {
-        user = new User();
-        user.setUsername("testuser");
+        MockitoAnnotations.openMocks(this);
 
-        product = new Product();
-        product.setId(1L);
-        product.setName("Mouse");
-        product.setQuantity(10);
-        product.setPrice(BigDecimal.valueOf(20.0));
-        product.setIsActive(true);
+        // Setup mock user
+        mockUser = new User();
+        mockUser.setUsername("john_doe");
 
-        order = new Order();
-        order.setUser(user);
-        order.setIsActive(true);
+        // Setup mock product
+        productUuid = String.valueOf(UUID.randomUUID());
+        mockProduct = new Product();
+        mockProduct.setUuid(productUuid);
+        mockProduct.setName("Test Product");
+        mockProduct.setPrice(new BigDecimal("10.00"));
+        mockProduct.setQuantity(5);
+        mockProduct.setIsActive(true);
 
-        orderItemInsertDto = new OrderItemInsertDto();
-        orderItemInsertDto.setProductUuid("1");
-        orderItemInsertDto.setQuantity(2);
-
-        orderInsertDto = new OrderInsertDto();
-        orderInsertDto.setItems(List.of(orderItemInsertDto));
-
-        readDto = new OrderReadOnlyDto();
-//        readDto.setUuid(UUID.randomUUID().toString());
+        // Setup SecurityContextHolder mock
+        Authentication auth = new UsernamePasswordAuthenticationToken("john_doe", null);
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(auth);
+        SecurityContextHolder.setContext(securityContext);
     }
 
     @Test
-    void shouldPlaceOrderSuccessfully() throws Exception {
-        // Mock SecurityContext
-        Authentication auth = mock(Authentication.class);
-        when(auth.getName()).thenReturn("testuser");
-        SecurityContext context = mock(SecurityContext.class);
-        when(context.getAuthentication()).thenReturn(auth);
-        SecurityContextHolder.setContext(context);
+    void placeOrder_Success() throws Exception {
+        // Arrange
+        OrderItemInsertDto itemDto = new OrderItemInsertDto();
+        itemDto.setProductUuid(productUuid);
+        itemDto.setQuantity(2);
 
-        when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(user));
-        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
-        when(orderRepository.save(any(Order.class))).thenAnswer(inv -> {
-            Order saved = inv.getArgument(0);
-            saved.setUuid(UUID.randomUUID().toString());
-            return saved;
-        });
-        when(mapper.mapToOrderReadOnlyDto(any(Order.class))).thenReturn(readDto);
+        OrderInsertDto orderInsertDto = new OrderInsertDto();
+        orderInsertDto.setItems(List.of(itemDto));
 
+        when(userRepository.findByUsername("john_doe")).thenReturn(Optional.of(mockUser));
+        when(productRepository.findByUuid(productUuid)).thenReturn(Optional.of(mockProduct));
+
+        // Simulate saving order
+        Order savedOrder = new Order();
+        savedOrder.setId(1L);
+        savedOrder.setUser(mockUser);
+        savedOrder.setIsActive(true);
+        when(orderRepository.save(any(Order.class))).thenReturn(savedOrder);
+
+        OrderReadOnlyDto readOnlyDto = new OrderReadOnlyDto();
+        readOnlyDto.setOrderId(1L);
+        when(mapper.mapToOrderReadOnlyDto(savedOrder)).thenReturn(readOnlyDto);
+
+        // Act
         OrderReadOnlyDto result = orderService.placeOrder(orderInsertDto);
 
+        // Assert
         assertNotNull(result);
-        verify(productRepository).findById(1L);
+        assertEquals(1L, result.getOrderId());
+
+        verify(userRepository).findByUsername("john_doe");
+        verify(productRepository).findByUuid(productUuid);
         verify(orderRepository).save(any(Order.class));
+
+        // Verify product quantity updated
+        assertEquals(3, mockProduct.getQuantity());
     }
 
     @Test
-    void shouldThrow_WhenUserNotFound() {
-        when(userRepository.findByUsername(any())).thenReturn(Optional.empty());
+    void placeOrder_ThrowsWhenUserNotFound() {
+        when(userRepository.findByUsername("john_doe")).thenReturn(Optional.empty());
 
-        assertThrows(AppObjectNotFoundException.class, () -> orderService.placeOrder(orderInsertDto));
+        OrderInsertDto dto = new OrderInsertDto();
+
+        AppObjectNotFoundException ex = assertThrows(AppObjectNotFoundException.class,
+                () -> orderService.placeOrder(dto));
+
+        assertTrue(ex.getMessage().contains("The user was not found"));
     }
 
     @Test
-    void shouldThrow_WhenProductNotFound() {
-        mockSecurityUsername("testuser");
-        when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(user));
-        when(productRepository.findById(1L)).thenReturn(Optional.empty());
+    void placeOrder_ThrowsWhenProductNotFound() {
+        when(userRepository.findByUsername("john_doe")).thenReturn(Optional.of(mockUser));
+        when(productRepository.findByUuid(productUuid)).thenReturn(Optional.empty());
 
-        assertThrows(AppObjectNotFoundException.class, () -> orderService.placeOrder(orderInsertDto));
+        OrderItemInsertDto itemDto = new OrderItemInsertDto();
+        itemDto.setProductUuid(productUuid);
+        itemDto.setQuantity(1);
+
+        OrderInsertDto dto = new OrderInsertDto();
+        dto.setItems(List.of(itemDto));
+
+        AppObjectNotFoundException ex = assertThrows(AppObjectNotFoundException.class,
+                () -> orderService.placeOrder(dto));
+
+        assertTrue(ex.getMessage().contains("The product was not found"));
     }
 
     @Test
-    void shouldThrow_WhenQuantityIsZero() {
-        mockSecurityUsername("testuser");
-        orderItemInsertDto.setQuantity(0);
+    void placeOrder_ThrowsWhenQuantityZeroOrLess() {
+        when(userRepository.findByUsername("john_doe")).thenReturn(Optional.of(mockUser));
+        when(productRepository.findByUuid(productUuid)).thenReturn(Optional.of(mockProduct));
 
-        when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(user));
-        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+        OrderItemInsertDto itemDto = new OrderItemInsertDto();
+        itemDto.setProductUuid(productUuid);
+        itemDto.setQuantity(0); // invalid quantity
 
-        assertThrows(AppObjectInvalidArgumentException.class, () -> orderService.placeOrder(orderInsertDto));
+        OrderInsertDto dto = new OrderInsertDto();
+        dto.setItems(List.of(itemDto));
+
+        AppObjectInvalidArgumentException ex = assertThrows(AppObjectInvalidArgumentException.class,
+                () -> orderService.placeOrder(dto));
+
+        assertTrue(ex.getMessage().contains("Quantity must be greater than 0"));
     }
 
     @Test
-    void shouldThrow_WhenNotEnoughStock() {
-        mockSecurityUsername("testuser");
-        product.setQuantity(1);
-        orderItemInsertDto.setQuantity(2);
+    void placeOrder_ThrowsWhenNotEnoughStock() {
+        when(userRepository.findByUsername("john_doe")).thenReturn(Optional.of(mockUser));
+        when(productRepository.findByUuid(productUuid)).thenReturn(Optional.of(mockProduct));
 
-        when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(user));
-        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+        OrderItemInsertDto itemDto = new OrderItemInsertDto();
+        itemDto.setProductUuid(productUuid);
+        itemDto.setQuantity(10); // more than available
 
-        assertThrows(AppObjectInvalidArgumentException.class, () -> orderService.placeOrder(orderInsertDto));
+        OrderInsertDto dto = new OrderInsertDto();
+        dto.setItems(List.of(itemDto));
+
+        AppObjectInvalidArgumentException ex = assertThrows(AppObjectInvalidArgumentException.class,
+                () -> orderService.placeOrder(dto));
+
+        assertTrue(ex.getMessage().contains("Not enough stock"));
     }
 
     @Test
-    void shouldToggleOrderActiveStatus() throws Exception {
-        String orderUuid = UUID.randomUUID().toString();
-        order.setUuid(orderUuid.toString());
+    void deactivateOrder_TogglesIsActive() throws Exception {
+        Order order = new Order();
+        order.setUuid("order-uuid");
         order.setIsActive(true);
 
-        when(orderRepository.findByUuid(orderUuid.toString())).thenReturn(Optional.of(order));
+        when(orderRepository.findByUuid("order-uuid")).thenReturn(Optional.of(order));
+        when(orderRepository.save(order)).thenReturn(order);
 
-        orderService.deactivateOrder(orderUuid);
+        orderService.deactivateOrder("order-uuid");
 
         assertFalse(order.getIsActive());
         verify(orderRepository).save(order);
     }
 
     @Test
-    void shouldThrow_WhenOrderToToggleNotFound() {
-        String orderUuid = UUID.randomUUID().toString();
-        when(orderRepository.findByUuid(orderUuid)).thenReturn(Optional.empty());
+    void deactivateOrder_ThrowsWhenOrderNotFound() {
+        when(orderRepository.findByUuid("order-uuid")).thenReturn(Optional.empty());
 
-        assertThrows(AppObjectNotFoundException.class, () -> orderService.deactivateOrder(orderUuid));
+        AppObjectNotFoundException ex = assertThrows(AppObjectNotFoundException.class,
+                () -> orderService.deactivateOrder("order-uuid"));
+
+        assertTrue(ex.getMessage().contains("The order was not found"));
     }
 
     @Test
-    void shouldReturnPaginatedSortedOrders() {
-        Order order2 = new Order();
-        Page<Order> page = new PageImpl<>(List.of(order, order2));
+    void removeOrder_DeletesOrder() throws Exception {
+        Order order = new Order();
+        order.setUuid("order-uuid");
 
-        when(orderRepository.findAll(any(Pageable.class))).thenReturn(page);
-        when(mapper.mapToOrderReadOnlyDto(any())).thenReturn(readDto);
+        when(orderRepository.findByUuid("order-uuid")).thenReturn(Optional.of(order));
 
-        Page<OrderReadOnlyDto> result = orderService.getPaginatedSortedOrders(0, 5, "id", "DESC");
+        orderService.removeOrder("order-uuid");
 
-        assertEquals(2, result.getTotalElements());
+        verify(orderRepository).delete(order);
     }
 
-    private void mockSecurityUsername(String username) {
-        Authentication auth = mock(Authentication.class);
-        when(auth.getName()).thenReturn(username);
-        SecurityContext context = mock(SecurityContext.class);
-        when(context.getAuthentication()).thenReturn(auth);
-        SecurityContextHolder.setContext(context);
+    @Test
+    void removeOrder_ThrowsWhenOrderNotFound() {
+        when(orderRepository.findByUuid("order-uuid")).thenReturn(Optional.empty());
+
+        AppObjectNotFoundException ex = assertThrows(AppObjectNotFoundException.class,
+                () -> orderService.removeOrder("order-uuid"));
+
+        assertTrue(ex.getMessage().contains("The order was not found"));
+    }
+
+    @Test
+    void getPaginatedSortedOrders_ReturnsMappedPage() {
+        Order order = new Order();
+        order.setId(1L);
+
+        Page<Order> page = new PageImpl<>(List.of(order));
+        when(orderRepository.findAll(any(Pageable.class))).thenReturn(page);
+
+        OrderReadOnlyDto dto = new OrderReadOnlyDto();
+        dto.setOrderId(1L);
+
+        when(mapper.mapToOrderReadOnlyDto(order)).thenReturn(dto);
+
+        Page<OrderReadOnlyDto> result = orderService.getPaginatedSortedOrders(0, 10, "id", "asc");
+
+        assertEquals(1, result.getContent().size());
+        assertEquals(1L, result.getContent().get(0).getOrderId());
     }
 }
-
