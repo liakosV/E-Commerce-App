@@ -151,6 +151,35 @@ public class UserRestController {
         LOGGER.info("User infos updated successfully.");
     }
 
+    @Operation(
+            summary = "Get a user",
+            security = @SecurityRequirement(name = "Bearer Authentication"),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "User found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = UserReadOnlyDto.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "Unauthorized",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Access Denied",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "User not found",
+                            content = @Content
+                    )
+            }
+    )
     @GetMapping("/{userId}")
     public ResponseEntity<UserReadOnlyDto> getUser(@PathVariable String userId) throws AppObjectNotFoundException {
         UserReadOnlyDto userReadOnlyDto = userService.getUserByUuid(userId);
