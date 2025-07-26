@@ -16,12 +16,12 @@ import gr.aueb.cf.e_commerce_app.repository.RegionRepository;
 import gr.aueb.cf.e_commerce_app.repository.RoleRepository;
 import gr.aueb.cf.e_commerce_app.repository.UserMoreInfoRepository;
 import gr.aueb.cf.e_commerce_app.repository.UserRepository;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -59,8 +59,6 @@ class UserServiceTest {
 
     @BeforeEach
     void setUp() {
-
-        // SaveUser Setup
         userInsertDto = new UserInsertDto();
         userInsertDto.setUsername("john_doe");
         userInsertDto.setEmail("john@example.com");
@@ -76,13 +74,9 @@ class UserServiceTest {
         user.setEmail("john@example.com");
         user.setRole(role);
 
-
-
-        // Setup for updateUserMoreInfo
         UserDetails userDetails = new org.springframework.security.core.userdetails.User(
                 "john_doe", "", List.of(new SimpleGrantedAuthority("ROLE_USER"))
         );
-
         Authentication auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(auth);
 
@@ -95,14 +89,14 @@ class UserServiceTest {
         targetUser = new User();
         targetUser.setId(1L);
         targetUser.setUsername("john_doe");
+        targetUser.setUuid(targetUserId.toString());
         targetUser.setRole(role);
 
         insertDto = new UserMoreInfoInsertDto();
         insertDto.setPhoneNumber("1234567890");
-        insertDto.setGender(Gender.valueOf("MALE"));
+        insertDto.setGender(Gender.MALE);
         insertDto.setAddress("Street");
         insertDto.setAddressNumber("42");
-        insertDto.setProfilePhotoUrl("photo.jpg");
         insertDto.setRegionId(1L);
 
         region = new Region();
@@ -110,12 +104,11 @@ class UserServiceTest {
         region.setName("TestRegion");
     }
 
-    // ----------- Tests for saveUser() ------------
+    // ----------- saveUser() ------------
 
     @Test
     void shouldThrow_WhenUsernameExists() {
         when(userRepository.findByUsername("john_doe")).thenReturn(Optional.of(user));
-
         assertThrows(AppObjectAlreadyExistsException.class, () -> userService.saveUser(userInsertDto));
     }
 
@@ -123,7 +116,6 @@ class UserServiceTest {
     void shouldThrow_WhenEmailExists() {
         when(userRepository.findByUsername("john_doe")).thenReturn(Optional.empty());
         when(userRepository.findByEmail("john@example.com")).thenReturn(Optional.of(user));
-
         assertThrows(AppObjectAlreadyExistsException.class, () -> userService.saveUser(userInsertDto));
     }
 
@@ -132,7 +124,6 @@ class UserServiceTest {
         when(userRepository.findByUsername("john_doe")).thenReturn(Optional.empty());
         when(userRepository.findByEmail("john@example.com")).thenReturn(Optional.empty());
         when(roleRepository.findByName("USER")).thenReturn(Optional.empty());
-
         assertThrows(AppObjectNotFoundException.class, () -> userService.saveUser(userInsertDto));
     }
 
@@ -155,33 +146,31 @@ class UserServiceTest {
         assertTrue(user.getIsActive());
     }
 
-    // ----------- Tests for deactivateUser() ------------
+    // ----------- deactivateUser() ------------
 
     @Test
-    void deactivateUser_shouldToggleIsActiveFlagAndSave() throws AppObjectNotFoundException, AppObjectAccessDeniedException {
-        // given
+    void deactivateUser_shouldToggleIsActiveFlagAndSave() throws Exception {
         String uuid = "test-uuid";
+        Role role = new Role();
+        role.setName("admin");
         User user = new User();
         user.setUuid(uuid);
-        user.setIsActive(true); // initially active
+        user.setRole(role);
+        user.setIsActive(true);
 
         when(userRepository.findByUuid(uuid)).thenReturn(Optional.of(user));
 
-        // when
         userService.deactivateUser(uuid);
 
-        // then
-        assertFalse(user.getIsActive()); // toggled to false
+        assertFalse(user.getIsActive());
         verify(userRepository).save(user);
     }
 
     @Test
     void deactivateUser_shouldThrowExceptionWhenUserNotFound() {
-        // given
         String uuid = "missing-uuid";
         when(userRepository.findByUuid(uuid)).thenReturn(Optional.empty());
 
-        // when + then
         AppObjectNotFoundException thrown = assertThrows(AppObjectNotFoundException.class, () ->
                 userService.deactivateUser(uuid));
 
@@ -189,7 +178,7 @@ class UserServiceTest {
         verify(userRepository, never()).save(any());
     }
 
-    // ----------- Tests for updateUserMoreInfo() ------------
+    // ----------- updateUserMoreInfo() ------------
 
     @Test
     void shouldThrow_WhenTargetUserNotFound() {
@@ -218,7 +207,7 @@ class UserServiceTest {
 
         UserMoreInfo existingInfo = new UserMoreInfo();
         User anotherUser = new User();
-        anotherUser.setId(999L); // different ID
+        anotherUser.setId(999L);
         existingInfo.setUser(anotherUser);
 
         when(userMoreInfoRepository.findByPhoneNumber(insertDto.getPhoneNumber())).thenReturn(Optional.of(existingInfo));
@@ -233,16 +222,72 @@ class UserServiceTest {
         when(userMoreInfoRepository.findByPhoneNumber(insertDto.getPhoneNumber())).thenReturn(Optional.empty());
         when(regionRepository.findById(1L)).thenReturn(Optional.of(region));
         when(userRepository.save(any(User.class))).thenReturn(targetUser);
+        targetUser.setUserMoreInfo(new UserMoreInfo());
 
         userService.updateUserMoreInfo(targetUserId, insertDto);
 
-        verify(userRepository, times(1)).save(targetUser);
+        verify(userRepository).save(targetUser);
         assertEquals("1234567890", targetUser.getUserMoreInfo().getPhoneNumber());
-        assertEquals(Gender.valueOf("MALE"), targetUser.getUserMoreInfo().getGender());
+        assertEquals(Gender.MALE, targetUser.getUserMoreInfo().getGender());
         assertEquals("Street", targetUser.getUserMoreInfo().getAddress());
         assertEquals("42", targetUser.getUserMoreInfo().getAddressNumber());
-        assertEquals("photo.jpg", targetUser.getUserMoreInfo().getProfilePhotoUrl());
         assertEquals(region, targetUser.getUserMoreInfo().getRegion());
+    }
+
+    // ----------- removeUser() ------------
+
+    @Test
+    void shouldRemoveUser_WhenUserExistsAndAuthorized() throws Exception {
+        String uuid = "some-uuid";
+        when(userRepository.findByUuid(uuid)).thenReturn(Optional.of(targetUser));
+
+        userService.removeUser(uuid);
+
+        verify(userRepository).delete(targetUser);
+    }
+
+    @Test
+    void shouldThrow_WhenRemoveUserAndUserNotFound() {
+        String uuid = "missing-uuid";
+        when(userRepository.findByUuid(uuid)).thenReturn(Optional.empty());
+
+        assertThrows(AppObjectNotFoundException.class, () -> userService.removeUser(uuid));
+    }
+
+    // ----------- getUserByUuid() ------------
+
+    @Test
+    void shouldReturnUser_WhenUuidIsValid() throws Exception {
+        String uuid = "valid-uuid";
+        when(userRepository.findByUuid(uuid)).thenReturn(Optional.of(targetUser));
+
+        UserReadOnlyDto dto = new UserReadOnlyDto();
+        dto.setUsername("john_doe");
+
+        when(mapper.mapToUserReadOnlyDto(targetUser)).thenReturn(dto);
+
+        UserReadOnlyDto result = userService.getUserByUuid(uuid);
+
+        assertNotNull(result);
+        assertEquals("john_doe", result.getUsername());
+    }
+
+    // ----------- getPaginatedSortedUsers() ------------
+
+    @Test
+    void shouldReturnPaginatedUsers() {
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("username").ascending());
+        Page<User> page = new PageImpl<>(List.of(user));
+
+        when(userRepository.findAll(any(Pageable.class))).thenReturn(page);
+        UserReadOnlyDto dto = new UserReadOnlyDto();
+        dto.setUsername("john_doe");
+        when(mapper.mapToUserReadOnlyDto(user)).thenReturn(dto);
+
+        Page<UserReadOnlyDto> result = userService.getPaginatedSortedUsers(0, 10, "username", "asc");
+
+        assertEquals(1, result.getContent().size());
+        assertEquals("john_doe", result.getContent().get(0).getUsername());
     }
 
     @AfterEach
