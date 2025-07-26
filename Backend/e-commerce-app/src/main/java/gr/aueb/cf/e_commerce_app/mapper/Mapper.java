@@ -137,7 +137,7 @@ public class Mapper {
         dto.setAddressNumber(userMoreInfo.getAddressNumber());
 
         Region region = userMoreInfo.getRegion();
-        dto.setRegionName(region != null ? region.getName() : null);
+        dto.setRegion(region != null ? mapToRegionReadOnlyDto(region) : null);
 
         return dto;
     }
@@ -246,12 +246,24 @@ public class Mapper {
         return dto;
     }
 
+    /**
+     * Converts a {@link RegionInsertDto} to a {@link Region} entity.
+     *
+     * @param dto the insert DTO
+     * @return the mapped Region entity
+     */
     public Region mapToRegionEntity(RegionInsertDto dto) {
         Region region = new Region();
         region.setName(dto.getName().toUpperCase());
         return region;
     }
 
+    /**
+     * Converts a {@link Region} entity to a {@link RegionReadOnlyDto}.
+     *
+     * @param region the region entity
+     * @return the mapped RegionReadOnlyDto
+     */
     public RegionReadOnlyDto mapToRegionReadOnlyDto(Region region) {
 
         return new RegionReadOnlyDto(region.getId(), region.getName());
