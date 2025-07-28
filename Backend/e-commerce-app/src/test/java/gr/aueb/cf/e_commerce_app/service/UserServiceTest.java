@@ -21,7 +21,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -276,7 +275,6 @@ class UserServiceTest {
 
     @Test
     void shouldReturnPaginatedUsers() {
-        Pageable pageable = PageRequest.of(0, 10, Sort.by("username").ascending());
         Page<User> page = new PageImpl<>(List.of(user));
 
         when(userRepository.findAll(any(Pageable.class))).thenReturn(page);

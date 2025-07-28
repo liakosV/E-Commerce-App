@@ -122,7 +122,6 @@ public class UserService {
             info.setPhoneNumber(null);
         }
 
-
         if (info == null) {
             info = new UserMoreInfo();
         }

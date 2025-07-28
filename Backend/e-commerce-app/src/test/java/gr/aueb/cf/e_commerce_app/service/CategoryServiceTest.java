@@ -9,7 +9,6 @@ import gr.aueb.cf.e_commerce_app.mapper.Mapper;
 import gr.aueb.cf.e_commerce_app.model.Product;
 import gr.aueb.cf.e_commerce_app.model.static_data.Category;
 import gr.aueb.cf.e_commerce_app.repository.CategoryRepository;
-import gr.aueb.cf.e_commerce_app.service.CategoryService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

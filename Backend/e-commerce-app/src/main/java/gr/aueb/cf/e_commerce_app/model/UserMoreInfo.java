@@ -1,10 +1,8 @@
 package gr.aueb.cf.e_commerce_app.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import gr.aueb.cf.e_commerce_app.core.enums.Gender;
 import gr.aueb.cf.e_commerce_app.model.static_data.Region;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 
 @Getter
