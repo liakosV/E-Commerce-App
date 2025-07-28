@@ -79,7 +79,7 @@ spring.datasource.password=12345
 
 #### 2. Run the Backend
 
-Go to: `# backend/e-commerce-app/src/main/resources/application-test.properties`, and follow the instructions
+Go to: `backend/e-commerce-app/src/main/resources/application-test.properties`, and follow the instructions
 
 ```properties
 ## COMMENT AT CREATE, UNCOMMENT AT FIRST UPDATE AND COMMENT AGAIN AFTER THE FIRST UPDATE
@@ -94,7 +94,7 @@ cd backend/e-commerce-app
 ./gradlew bootRun
 ```
 
-The backend runs at: [http://localhost:8080](http://localhost:8080)
+API Docs via Swagger: [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
 
 #### 3. Run the Frontend
 
@@ -105,7 +105,3 @@ ng serve
 ```
 
 The frontend runs at: [http://localhost:4200](http://localhost:4200)
-
-#### 4. Optional: API Docs via Swagger
-
-Visit: [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
