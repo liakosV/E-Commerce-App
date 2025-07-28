@@ -71,13 +71,23 @@ Start MySQL and create the database
 Update the properties file:
 
 ```properties
-# backend/e-commerce-app/src/main/resources/application.properties
+# backend/e-commerce-app/src/main/resources/application-test.properties
 spring.datasource.url=jdbc:mysql://localhost:3306/ecommerce_app
 spring.datasource.username=user7
 spring.datasource.password=12345
 ```
 
 #### 2. Run the Backend
+
+Go to: `# backend/e-commerce-app/src/main/resources/application-test.properties`, and follow the instructions
+
+```properties
+## COMMENT AT CREATE, UNCOMMENT AT FIRST UPDATE AND COMMENT AGAIN AFTER THE FIRST UPDATE
+#spring.sql.init.mode=always
+#spring.sql.init.data-locations=classpath:sql/regions.sql, classpath:sql/roles.sql, 
+# classpath:sql/categories.sql, classpath:sql/products.sql, classpath:sql/users.sql
+```
+Then do:
 
 ```
 cd backend/e-commerce-app
