@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ecommerce_app
+      MYSQL_USER: user7
+      MYSQL_PASSWORD: 12345
+    ports:
+      - "3306:3306"
+    networks:
+      - ecommerce-network
+
+  backend:
+    depends_on:
+      mysql:
+        condition: service_healthy
+    build:
+      context: ./backend/e-commerce-app
+    container_name: spring-backend
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/ecommerce_app?serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: user7
+      SPRING_DATASOURCE_PASSWORD: 12345
+    networks:
+      - ecommerce-network
+
+  frontend:
+    depends_on:
+      - backend
+    build:
+      context: ./frontend
+    container_name: angular-frontend
+    ports:
+      - "4200:4200"
+    networks:
+      - ecommerce-network
+
+  dataloader:
+    image: mysql:8
+    container_name: sql-dataloader
+    depends_on:
+      - backend
+    volumes:
+      - ./data-loader/data.sql:/data.sql
+    entrypoint: >
+      bash -c "
+        echo 'Waiting 40 seconds for backend to create tables...';
+        sleep 40;
+        echo 'Loading initial data...';
+        mysql -h mysql -u user7 -p12345 ecommerce_app < /data.sql;
+        echo 'Data inserted successfully.'
+      "
+    networks:
+      - ecommerce-network
+    restart: "no"
+
+volumes:
+  mysql_data:
+
+
+networks:
+  ecommerce-network:
+
+
