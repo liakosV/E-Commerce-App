@@ -55,8 +55,8 @@ services:
       - ./data-loader/data.sql:/data.sql
     entrypoint: >
       bash -c "
-        echo 'Waiting 40 seconds for backend to create tables...';
-        sleep 40;
+        echo 'Waiting 60 seconds for backend to create tables...';
+        sleep 60;
         echo 'Loading initial data...';
         mysql -h mysql -u user7 -p12345 ecommerce_app < /data.sql;
         echo 'Data inserted successfully.'
