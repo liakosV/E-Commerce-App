@@ -105,3 +105,24 @@ ng serve
 ```
 
 The frontend runs at: [http://localhost:4200](http://localhost:4200)
+
+---
+
+## Extras
+
+Test the endpoints via [Postman](https://vasileiosliakos.postman.co/workspace/Vasileios-Liakos's-Workspace~caae1a19-d93b-47e4-8845-fb2638446b19/collection/43377658-073ce908-3a62-41dd-99b0-b96dbc6a42f0?action=share&creator=43377658&active-environment=43377658-abba2f4d-bc9c-4590-89c0-4dd509e3d9d8)
+
+Admin Mock credentials:
+
+- User: **JohnD**
+- Password: **@Password1**
+
+Seller Mock credentials:
+
+- User: **AliceW**
+- Password: **@Password1**
+
+Customer Mock credentials:
+
+- User: **BobB**
+- Password: **Password1**
