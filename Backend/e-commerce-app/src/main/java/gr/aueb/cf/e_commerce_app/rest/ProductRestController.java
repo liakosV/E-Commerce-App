@@ -6,6 +6,7 @@ import gr.aueb.cf.e_commerce_app.core.exceptions.ValidationException;
 import gr.aueb.cf.e_commerce_app.core.filters.ProductFilters;
 import gr.aueb.cf.e_commerce_app.dto.ProductInsertDto;
 import gr.aueb.cf.e_commerce_app.dto.ProductReadOnlyDto;
+import gr.aueb.cf.e_commerce_app.model.Product;
 import gr.aueb.cf.e_commerce_app.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -75,6 +76,38 @@ public class ProductRestController {
     @DeleteMapping("/{uuid}")
     public void removeProduct(@PathVariable String uuid) throws AppObjectNotFoundException {
         productService.removeProduct(uuid);
+    }
+
+    @Operation(
+            summary = "Updates a product",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Product updated",
+                            content = @Content
+                    ),
+                    @ApiResponse(responseCode = "404", description = "Product not found", content = @Content),
+                    @ApiResponse(responseCode = "409", description = "Product name already exists", content = @Content)
+            }
+    )
+    @PutMapping("/{uuid}")
+    public ResponseEntity<ProductReadOnlyDto> updateProduct(
+            @PathVariable String uuid,
+            @RequestBody @Valid ProductInsertDto insertDto,
+            BindingResult bindingResult
+    ) throws AppObjectNotFoundException, ValidationException {
+        if (bindingResult.hasErrors()) throw new ValidationException(bindingResult);
+
+        ProductReadOnlyDto productReadOnlyDto = productService.updateProduct(uuid, insertDto);
+
+        return new ResponseEntity<>(productReadOnlyDto, HttpStatus.OK);
+    }
+
+    @GetMapping("{uuid}")
+    public ResponseEntity<ProductReadOnlyDto> getProductByUuid(@PathVariable String uuid) throws AppObjectNotFoundException {
+        ProductReadOnlyDto productReadOnlyDto = productService.getProductByUuid(uuid);
+
+        return new ResponseEntity<>(productReadOnlyDto, HttpStatus.OK);
     }
 
     @Operation(
