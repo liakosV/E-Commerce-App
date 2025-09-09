@@ -56,6 +56,37 @@ public class ProductService {
                 .map(mapper::mapToProductReadOnlyDto);
     }
 
+    @Transactional
+    public ProductReadOnlyDto updateProduct(String productUuid, ProductInsertDto productInsertDto) throws AppObjectNotFoundException {
+        Product product = productRepository.findByUuid(productUuid)
+                .orElseThrow(() -> new AppObjectNotFoundException("Product", "The product was not found."));
+
+        productRepository.findByName(productInsertDto.getName())
+                .filter(existing -> !existing.getUuid().equals(productUuid))
+                .ifPresent(existing -> {
+                    try {
+                        throw new AppObjectAlreadyExistsException("Product", "The product " + productInsertDto.getName() + " already exists");
+                    } catch (AppObjectAlreadyExistsException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+
+        product.setName(productInsertDto.getName());
+        product.setDescription(productInsertDto.getDescription());
+        product.setPrice(productInsertDto.getPrice());
+        product.setQuantity(productInsertDto.getQuantity());
+        product.getCategory().setId(productInsertDto.getCategoryId());
+
+        return mapper.mapToProductReadOnlyDto(product);
+    }
+
+    public ProductReadOnlyDto getProductByUuid(String productUuid) throws AppObjectNotFoundException {
+        Product product = productRepository.findByUuid(productUuid)
+                .orElseThrow(() -> new AppObjectNotFoundException("Product", "The product was not found."));
+
+        return mapper.mapToProductReadOnlyDto(product);
+    }
+
     private Specification<Product> getSpecsFromFilter(ProductFilters filters) {
         return Specification
                 .where(ProductSpecification.hasCategory(filters.getCategory()))
