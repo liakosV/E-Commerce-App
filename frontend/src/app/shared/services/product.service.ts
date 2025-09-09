@@ -25,6 +25,14 @@ export class ProductService {
     return this.http.delete<Product>(`${API_URL}/${uuid}`);
   }
 
+  updateProduct(uuid: string, product: ProductInsertDto): Observable<Product> {
+    return this.http.put<Product>(`${API_URL}/${uuid}`, product);
+  }
+
+  getProductByUuid(uuid: string): Observable<Product> {
+    return this.http.get<Product>(`${API_URL}/${uuid}`)
+  }
+
   getProductsFiltered(
     filters: ProductFilters,
     page: number,
