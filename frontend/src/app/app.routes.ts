@@ -17,6 +17,7 @@ import { OrderSettingsComponent } from './components/admin-settings/order-settin
 import { TermsComponent } from './components/terms/terms.component';
 import { AboutComponent } from './components/about/about.component';
 import { ContactComponent } from './components/contact/contact.component';
+import { UpdateProductComponent } from './components/update-product/update-product.component';
 
 export const routes: Routes = [
   {path: '', component: HomeComponent},
@@ -30,6 +31,7 @@ export const routes: Routes = [
   {path: 'account', component: PersonalInfoComponent, canActivate: [authGuard]},
   {path: 'account/:uuid', component: PersonalInfoComponent, canActivate: [roleGuard], data: {roles: ['ADMIN']}},
   {path: 'add-product', component: AddProductComponent, canActivate: [roleGuard], data: {roles: ['ADMIN', 'SELLER']}},
+  {path: 'update-product/:uuid', component: UpdateProductComponent, canActivate: [roleGuard], data: {roles: ['ADMIN', 'SELLER']}},
   {
     path: 'admin', 
     component: AdminSettingsComponent,
