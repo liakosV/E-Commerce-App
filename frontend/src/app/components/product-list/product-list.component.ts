@@ -9,6 +9,7 @@ import { AuthService } from '../../shared/services/auth.service';
 
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -23,6 +24,7 @@ import { Category } from '../../shared/interfaces/category';
 import { MatSelectModule } from '@angular/material/select';
 import {MatRadioModule} from '@angular/material/radio';
 import { CategoryService } from '../../shared/services/category.service';
+
 
 @Component({
   selector: 'app-product-list',
@@ -42,6 +44,7 @@ import { CategoryService } from '../../shared/services/category.service';
     MatRadioModule,
     ReactiveFormsModule,
     FormsModule,
+    RouterModule
 ],
   templateUrl: './product-list.component.html',
   styleUrl: './product-list.component.css'
